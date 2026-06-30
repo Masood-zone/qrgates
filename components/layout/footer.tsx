@@ -1,36 +1,22 @@
 "use client";
 
 import type React from "react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Youtube,
-  Linkedin,
-  Github,
-  Mail,
-  Phone,
-  MapPin,
-  ArrowUp,
-  Send,
-} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { apiPost } from "@/lib/services";
+import { Mail, MapPin, Phone, Send, Share2, UsersRound, Globe2 } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { apiPost } from "@/lib/services";
 
 export function Footer() {
   const [email, setEmail] = useState("");
 
-  // Use the mutation hook at component level
   const newsletterMutation = useMutation({
-    mutationFn: async (email: string) => {
-      return await apiPost("/newsletter", { email });
+    mutationFn: async (value: string) => {
+      return apiPost("/newsletter", { email: value });
     },
     onSuccess: () => {
       toast.success("You've subscribed successfully!");
@@ -41,289 +27,132 @@ export function Footer() {
     },
   });
 
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      newsletterMutation.mutate(email);
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleNewsletterSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (email.trim()) newsletterMutation.mutate(email);
   };
 
   return (
-    <footer className="bg-slate-900 text-white">
-      <div className="flex justify-center py-6 bg-slate-800">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="bg-primary hover:bg-slate-600 rounded-full text-white hover:text-white transition-all duration-300"
-          onClick={scrollToTop}
-        >
-          <ArrowUp className="w-4 h-4" />
-        </Button>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-          {/* Company Info & Contact */}
-          <div className="lg:col-span-2 xl:col-span-2">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-white mb-2">QRGate</h2>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Revolutionizing event management with cutting-edge QR
-                technology. Create, manage, and track your events seamlessly
-                with our comprehensive platform.
+    <footer className="bg-[#121827] text-white">
+      <div className="mx-auto max-w-7xl px-5 py-16">
+        <div className="grid gap-10 md:grid-cols-4">
+          <div>
+            <Link href="/" className="mb-5 flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-extrabold">
+                QR
+              </span>
+              <span className="text-xl font-extrabold">QRGate</span>
+            </Link>
+            <p className="text-sm leading-6 text-slate-300">
+              Revolutionizing event management with QR technology. Create,
+              manage, book, and verify tickets with one focused platform.
+            </p>
+            <div className="mt-6 space-y-3 text-sm text-slate-300">
+              <p className="flex items-center gap-3">
+                <MapPin className="h-4 w-4 text-primary" />
+                University of Cape Coast, Ghana
               </p>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="font-semibold text-lg text-white mb-4">
-                GET IN TOUCH
-              </h3>
-              <div className="flex items-start gap-3 text-sm text-gray-300">
-                <MapPin className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
-                <div>
-                  <p>University of Cape Coast</p>
-                  <p>Cape Coast, Central Region, Ghana</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-300">
-                <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                <Link
-                  href="tel:+233598346928"
-                  className="hover:text-white transition-colors"
-                >
-                  +233 59 834 6928
-                </Link>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-300">
-                <Mail className="w-4 h-4 text-primary flex-shrink-0" />
-                <Link
-                  href="mailto:info@qrgates.me"
-                  className="hover:text-white transition-colors"
-                >
-                  info@qrgates.me
-                </Link>
-              </div>
+              <Link href="tel:+233598346928" className="flex items-center gap-3 hover:text-white">
+                <Phone className="h-4 w-4 text-primary" />
+                +233 59 834 6928
+              </Link>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-lg text-white mb-4">
-              QUICK LINKS
+            <h3 className="mb-5 text-sm font-extrabold uppercase tracking-wide">
+              Quick Links
             </h3>
-            <div className="space-y-3 text-sm">
-              <Link
-                href="/about"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
+            <div className="space-y-3 text-sm text-slate-300">
+              <Link href="/about" className="block hover:text-white">
                 About Us
               </Link>
-              <Link
-                href="/events"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
+              <Link href="/events" className="block hover:text-white">
                 Browse Events
               </Link>
-              <Link
-                href="/create-event"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
+              <Link href="/organizer/events/create" className="block hover:text-white">
                 Create Event
               </Link>
-              <Link
-                href="/pricing"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/contact"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
-                Contact Us
+              <Link href="/auth/signin" className="block hover:text-white">
+                Join Us
               </Link>
             </div>
           </div>
 
-          {/* Customer Support */}
           <div>
-            <h3 className="font-semibold text-lg text-white mb-4">SUPPORT</h3>
-            <div className="space-y-3 text-sm">
-              <Link
-                href="/dashboard"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
+            <h3 className="mb-5 text-sm font-extrabold uppercase tracking-wide">
+              Support
+            </h3>
+            <div className="space-y-3 text-sm text-slate-300">
+              <Link href="/dashboard" className="block hover:text-white">
                 My Account
               </Link>
-              <Link
-                href="/dashboard/events"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
-                My Events
-              </Link>
-              <Link
-                href="/dashboard/tickets"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
+              <Link href="/dashboard/tickets" className="block hover:text-white">
                 My Tickets
               </Link>
-              <Link
-                href="/help"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
-                Help Center
+              <Link href="/dashboard/orders" className="block hover:text-white">
+                My Orders
               </Link>
-              <Link
-                href="/support"
-                className="block text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
-              >
-                Support
+              <Link href="/about" className="block hover:text-white">
+                Contact Team
               </Link>
             </div>
           </div>
 
-          {/* Newsletter */}
-          <div className="lg:col-span-2 xl:col-span-1">
-            <h3 className="font-semibold text-lg text-white mb-4">
-              STAY UPDATED
+          <div>
+            <h3 className="mb-5 text-sm font-extrabold uppercase tracking-wide">
+              Stay Updated
             </h3>
-            <p className="text-sm text-gray-300 mb-4 leading-relaxed">
-              Subscribe to our newsletter and never miss out on the latest
-              events, features, and exclusive offers.
+            <p className="mb-4 text-sm leading-6 text-slate-300">
+              Subscribe for event updates and booking announcements.
             </p>
             <form onSubmit={handleNewsletterSubmit} className="space-y-3">
               <div className="relative">
                 <Input
                   type="email"
-                  placeholder="Enter your email..."
+                  placeholder="Enter your email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  onChange={(event) => setEmail(event.target.value)}
                   disabled={newsletterMutation.isPending}
-                  className="bg-slate-800 border-slate-700 text-white placeholder:text-gray-400 focus:border-primary focus:ring-primary pr-12"
+                  required
+                  className="border-white/10 bg-white/5 pr-10 text-white placeholder:text-slate-400"
                 />
-                <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Mail className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               </div>
               <Button
                 type="submit"
+                className="w-full"
                 disabled={newsletterMutation.isPending}
-                className="w-full bg-primary hover:bg-muted-foreground text-white transition-colors duration-200"
               >
-                {newsletterMutation.isPending ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Subscribing...
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Send className="w-4 h-4" />
-                    Subscribe
-                  </div>
-                )}
+                <Send className="mr-2 h-4 w-4" />
+                {newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}
               </Button>
             </form>
           </div>
         </div>
 
-        <Separator className="my-8 bg-slate-700" />
+        <Separator className="my-10 bg-white/10" />
 
-        {/* Bottom Section */}
-        <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
-          <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-gray-400">
-            <p className="text-center sm:text-left">
-              © 2025 <span className="font-semibold text-white">QRGate</span>.
-              All rights reserved.
-            </p>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/privacy"
-                className="hover:text-white transition-colors"
-              >
-                Privacy Policy
-              </Link>
-              <span className="text-slate-600">•</span>
-              <Link
-                href="/terms"
-                className="hover:text-white transition-colors"
-              >
-                Terms of Service
-              </Link>
-              <span className="text-slate-600">•</span>
-              <Link
-                href="/cookies"
-                className="hover:text-white transition-colors"
-              >
-                Cookie Policy
-              </Link>
-            </div>
+        <div className="flex flex-col items-center justify-between gap-5 text-sm text-slate-300 md:flex-row">
+          <p>Copyright 2026 QRGate. All rights reserved.</p>
+          <div className="flex items-center gap-5">
+            <Link href="/privacy" className="hover:text-white">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-white">
+              Terms of Service
+            </Link>
           </div>
-
-          {/* Social Links */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400 mr-2">Follow us:</span>
-            {[
-              {
-                Icon: Facebook,
-                href: "https://facebook.com/qrgate",
-                label: "Facebook",
-              },
-              {
-                Icon: Twitter,
-                href: "https://twitter.com/qrgate",
-                label: "Twitter",
-              },
-              {
-                Icon: Instagram,
-                href: "https://instagram.com/qrgate",
-                label: "Instagram",
-              },
-              {
-                Icon: Youtube,
-                href: "https://youtube.com/qrgate",
-                label: "YouTube",
-              },
-              {
-                Icon: Linkedin,
-                href: "https://linkedin.com/company/qrgate",
-                label: "LinkedIn",
-              },
-              {
-                Icon: Github,
-                href: "https://github.com/qrgate",
-                label: "GitHub",
-              },
-            ].map(({ Icon, href, label }, index) => (
-              <Button
+          <div className="flex gap-3">
+            {[Globe2, Share2, UsersRound].map((Icon, index) => (
+              <span
                 key={index}
-                variant="ghost"
-                size="icon"
-                asChild
-                className="text-gray-400 hover:text-white hover:bg-slate-700 transition-all duration-200 hover:scale-110"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-slate-300"
               >
-                <Link
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                >
-                  <Icon className="w-4 h-4" />
-                </Link>
-              </Button>
+                <Icon className="h-4 w-4" />
+              </span>
             ))}
           </div>
-        </div>
-
-        {/* Developer Credit */}
-        <div className="mt-6 pt-6 border-t border-slate-700">
-          <p className="text-center text-xs text-gray-500">
-            Crafted with ❤️ by the{" "}
-            <span className="font-semibold text-gray-400">QRGate Team</span> •
-            Powered by QRGate Team
-          </p>
         </div>
       </div>
     </footer>

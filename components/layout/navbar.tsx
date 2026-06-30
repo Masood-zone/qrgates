@@ -47,11 +47,11 @@ export function Navbar() {
 
   return (
     <nav
-  className={`bg-white/30 dark:bg-gray-950/70 backdrop-blur-md px-4 py-3 dark:text-foreground ${
-    isSticky ? "sticky top-0 z-30" : ""
-  }`}
->
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-y-2">
+      className={`border-b border-border/70 bg-white/90 px-4 py-3 shadow-sm backdrop-blur-md dark:bg-slate-950/85 dark:text-foreground ${
+        isSticky ? "sticky top-0 z-30" : ""
+      }`}
+    >
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-y-2">
         {/* Logo */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <Link href="/" className="flex items-center gap-2 text-xl font-bold">
@@ -60,7 +60,7 @@ export function Navbar() {
               alt="QRGates Logo"
               width={40}
               height={40}
-              className="h-8 w-8 rounded-full object-cover"
+              className="h-8 w-8 rounded-lg object-cover"
               loading="lazy"
               unoptimized
               quality={100}
@@ -69,27 +69,35 @@ export function Navbar() {
               onDragStart={(e) => e.preventDefault()}
               onContextMenu={(e) => e.preventDefault()}
             />
-            <span className="hidden sm:inline">QRGates</span>
+            <span className="hidden text-lg font-extrabold sm:inline">QRGate</span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8 flex-1 justify-center">
+        <div className="hidden flex-1 items-center justify-center gap-8 md:flex">
           <Link
             href="/"
-            className={`transition-colors font-medium${
-              pathname ==="/" ? " text-primary underline underline-offset-4" : "hover:text-muted-foreground"
+            className={`text-sm font-bold uppercase tracking-wide transition-colors ${
+              pathname === "/" ? "text-primary underline underline-offset-4" : "hover:text-primary"
             }`}
           >
             HOME
           </Link>
           <Link
             href="/events"
-            className={`transition-colors font-medium ${
-              pathname.startsWith("/events") ? " text-primary underline underline-offset-4" : "hover:text-muted-foreground"
+            className={`text-sm font-bold uppercase tracking-wide transition-colors ${
+              pathname.startsWith("/events") ? "text-primary underline underline-offset-4" : "hover:text-primary"
             }`}
           >
             DISCOVER EVENTS
+          </Link>
+          <Link
+            href="/about"
+            className={`text-sm font-bold uppercase tracking-wide transition-colors ${
+              pathname.startsWith("/about") ? "text-primary underline underline-offset-4" : "hover:text-primary"
+            }`}
+          >
+            ABOUT
           </Link>
         </div>
 
@@ -101,7 +109,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="hover:text-primary relative dark:text-gray-100 dark:hover:text-primary"
+                className="relative hover:text-primary dark:text-gray-100 dark:hover:text-primary"
                 onClick={() => setIsCartOpen(true)}
               >
                 <ShoppingCart className="w-4 h-4 mr-1" />
@@ -206,7 +214,7 @@ export function Navbar() {
             <>
               <Button
                 asChild
-                className="bg-transparent border border-primary hover:bg-primary hover:text-white text-primary font-medium rounded-md px-4 py-2 transition-colors"
+                className="rounded-md border border-primary bg-transparent px-4 py-2 font-bold text-primary transition-colors hover:bg-primary hover:text-white"
               >
                 <Link href="/auth/signin">JOIN US NOW</Link>
               </Button>

@@ -1,37 +1,55 @@
-import { CheckCircle, ShoppingBag, Ticket } from "lucide-react";
+import { BarChart3, CreditCard, FilePenLine, QrCode } from "lucide-react";
+
 const features = [
   {
-    icon: CheckCircle,
-    title: "CHOOSE EVENTS AND TICKETS",
-    description:
-      "Browse a curated selection of events and easily pick the tickets that suit your interests.",
+    icon: FilePenLine,
+    title: "Publish",
+    description: "Create events in minutes with ticket types, dates, and venue details.",
   },
   {
-    icon: ShoppingBag,
-    title: "BUY DIRECTLY FROM ORGANIZERS",
-    description:
-      "Purchase tickets securely from official event organizers with no hidden fees.",
+    icon: CreditCard,
+    title: "Sell",
+    description: "Let attendees choose tickets and move through a simple cart flow.",
   },
   {
-    icon: Ticket,
-    title: "RECEIVE TICKETS",
-    description:
-      "Get your tickets instantly via email and access them anytime from your account.",
+    icon: QrCode,
+    title: "Verify",
+    description: "Issue QR tickets and support fast entry checks at the gate.",
+  },
+  {
+    icon: BarChart3,
+    title: "Report",
+    description: "Track sales, attendees, and event performance from one dashboard.",
   },
 ];
 
 export function FeaturesSection() {
   return (
-    <section className="py-16 bg-background ">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div key={index} className="text-center">
-              <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center mx-auto mb-4">
-                <feature.icon className="w-8 h-8" />
+    <section className="bg-background py-20">
+      <div className="mx-auto max-w-7xl px-5">
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight">
+            Seamless Experience for Organizers
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            From the first draft to entry verification, QRGates keeps every
+            event workflow clear and quick.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="group rounded-xl border border-border/70 bg-card p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
+            >
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-rose-100 text-primary transition-transform group-hover:scale-105">
+                <feature.icon className="h-7 w-7" />
               </div>
-              <h3 className="font-semibold mb-2">{feature.title}</h3>
-              <p className=" text-sm">{feature.description}</p>
+              <h3 className="text-lg font-bold">{feature.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>

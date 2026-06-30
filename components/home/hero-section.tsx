@@ -1,126 +1,69 @@
-"use client";
-
+import Link from "next/link";
+import { ArrowRight, CirclePlus, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 
-const slides = [
-  {
-    image: "/hero-bg-1.jpg",
-    headline: "Buy & Sell Tickets Effortlessly",
-    sub: "The best solution for event organizers and attendees.",
-  },
-  {
-    image: "/hero-bg-2.jpg",
-    headline: "Discover Amazing Events",
-    sub: "Find concerts, workshops, meetups, and more near you.",
-  },
-  {
-    image: "/hero-bg-4.jpg",
-    headline: "Secure & Fast Checkout",
-    sub: "Enjoy seamless and secure ticketing with QRGates.",
-  },
+const stats = [
+  { value: "500k+", label: "Tickets sold" },
+  { value: "1.2k+", label: "Organizers" },
+  { value: "99.9%", label: "Uptime" },
+  { value: "0.5s", label: "Verification" },
 ];
 
 export function HeroSection() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const { theme } = useTheme();
-
-  // Auto-slide every 6 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
-    return () => clearTimeout(timer);
-  }, [currentSlide]);
-
-  const goToSlide = (idx: number) => setCurrentSlide(idx);
-  const prevSlide = () =>
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
-
   return (
-    <section
-      className="relative h-svh bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 overflow-hidden"
-      style={
-        {
-          // Optionally use theme variables for background overlay
-          // e.g., background: `var(--hero-gradient-bg, ...)` if defined
-        }
-      }
-    >
-      {/* Carousel Slides */}
-      {slides.map((slide, idx) => (
-        <div
-          key={slide.image}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-          }`}
-          aria-hidden={idx !== currentSlide}
-        >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url('${slide.image}')`,
-              filter: theme === "dark" ? "brightness(0.7)" : "brightness(0.85)",
-              transition: "filter 0.3s",
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/70" />
+    <section className="relative min-h-[760px] overflow-hidden bg-slate-950 text-white">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/hero-bg-4.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(18,25,44,0.70),rgba(18,25,44,0.92))]" />
+
+      <div className="relative z-10 mx-auto flex min-h-[620px] max-w-5xl flex-col items-center justify-center px-5 pt-20 text-center">
+        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/20 px-4 py-2 text-xs font-bold uppercase tracking-wide text-rose-100">
+          <QrCode className="h-4 w-4" />
+          The future of event entry
         </div>
-      ))}
+        <h1 className="max-w-4xl text-4xl font-extrabold leading-tight md:text-6xl">
+          Buy, Sell & Verify Event Tickets{" "}
+          <span className="text-rose-200">Effortlessly</span>
+        </h1>
+        <p className="mt-6 max-w-2xl text-base leading-7 text-slate-200 md:text-lg">
+          Launch events, sell tickets, and verify entry with secure QR codes and
+          a checkout flow built for fast bookings.
+        </p>
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <Button asChild size="lg" className="h-14 rounded-xl px-7 text-base">
+            <Link href="/events">
+              Discover Events
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="h-14 rounded-xl border-white/25 bg-white/10 px-7 text-base text-white hover:bg-white/20 hover:text-white"
+          >
+            <Link href="/organizer/events/create">
+              Create Your Event
+              <CirclePlus className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+      </div>
 
-      {/* Content */}
-      <div className="relative z-20 h-full flex items-center justify-center text-center text-white">
-        <div className="max-w-4xl px-4">
-          <p className="text-sm uppercase tracking-wider mb-4 opacity-90">
-            THE BEST SOLUTION FOR
-          </p>
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg animate-fade-in">
-            {slides[currentSlide].headline}
-          </h1>
-          <p className="text-lg md:text-2xl mb-8 opacity-90 animate-fade-in delay-100">
-            {slides[currentSlide].sub}
-          </p>
-
-          {/* Navigation Arrows */}
-          <div className="flex justify-center gap-4 mb-8">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/20 border border-white/20"
-              aria-label="Previous slide"
-              onClick={prevSlide}
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/20 border border-white/20"
-              aria-label="Next slide"
-              onClick={nextSlide}
-            >
-              <ChevronRight className="w-6 h-6" />
-            </Button>
-          </div>
-
-          {/* Slide Indicators */}
-          <div className="flex justify-center gap-2">
-            {slides.map((_, idx) => (
-              <button
-                key={idx}
-                className={`w-3 h-3 rounded-full border-2 border-white transition-all duration-300 ${
-                  idx === currentSlide
-                    ? "bg-white shadow-lg scale-110"
-                    : "bg-white/40"
-                }`}
-                aria-label={`Go to slide ${idx + 1}`}
-                onClick={() => goToSlide(idx)}
-              />
-            ))}
-          </div>
+      <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-white/20 bg-white/95 py-7 text-foreground shadow-xl backdrop-blur">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 md:grid-cols-4">
+          {stats.map((stat) => (
+            <div key={stat.label} className="text-center">
+              <p className="text-3xl font-extrabold leading-none text-primary md:text-4xl">
+                {stat.value}
+              </p>
+              <p className="mt-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                {stat.label}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
