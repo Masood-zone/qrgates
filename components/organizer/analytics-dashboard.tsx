@@ -21,6 +21,7 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
+import { DashboardLoadingPage } from "@/components/ui/loading";
 import {
   LineChart,
   Line,
@@ -41,16 +42,23 @@ export function AnalyticsDashboard() {
   const { data: session } = useSession();
   const [selectedPeriod, setSelectedPeriod] = useState("30");
 
-  const { data: eventsData } = useEvents({
-    organizerId: session?.user?.id,
-    limit: 100,
-  });
+  const { data: eventsData, isLoading: eventsLoading } = useEvents(
+    {
+      organizerId: session?.user?.id,
+      limit: 100,
+    },
+    { enabled: !!session?.user?.id }
+  );
 
-  const { data: ordersData } = useOrganizerOrders({
+  const { data: ordersData, isLoading: ordersLoading } = useOrganizerOrders({
     organizerId: session?.user?.id,
     status: "COMPLETED",
     limit: 1000,
   });
+
+  if (!session?.user?.id || eventsLoading || ordersLoading) {
+    return <DashboardLoadingPage />;
+  }
 
   const events = eventsData?.data || [];
   const orders = ordersData?.orders || [];
@@ -343,16 +351,7 @@ export function AnalyticsDashboard() {
                       </div>
                       <div className="text-right">
                         <div className="font-medium">Ghc{order.total}</div>
-                        <Badge
-                          variant={
-                            order.status === "COMPLETED"
-                              ? "default"
-                              : "secondary"
-                          }
-                          className="text-xs"
-                        >
-                          {order.status}
-                        </Badge>
+                        <Badge className="text-xs">COMPLETED</Badge>
                       </div>
                     </div>
                   ))}

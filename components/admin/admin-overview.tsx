@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BarChart3, Calendar, ShoppingBag, Ticket, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { DashboardLoadingPage } from "@/components/ui/loading";
 
 type AnalyticsData = {
   summary: {
@@ -21,13 +22,20 @@ type AnalyticsData = {
 
 export function AdminOverview() {
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     fetch("/api/admin/analytics")
       .then((res) => res.json())
       .then(setData)
-      .catch(() => setData(null));
+      .catch(() => setData(null))
+      .finally(() => setIsLoading(false));
   }, []);
+
+  if (isLoading) {
+    return <DashboardLoadingPage />;
+  }
 
   const summary = data?.summary;
   const stats = [
@@ -82,6 +90,9 @@ export function AdminOverview() {
                 </div>
               </div>
             ))}
+            {(data?.topEvents || []).length === 0 && (
+              <p className="text-sm text-muted-foreground">No completed event sales yet.</p>
+            )}
           </CardContent>
         </Card>
 
@@ -100,6 +111,9 @@ export function AdminOverview() {
                 </div>
               </div>
             ))}
+            {(data?.recentOrders || []).length === 0 && (
+              <p className="text-sm text-muted-foreground">No completed orders yet.</p>
+            )}
           </CardContent>
         </Card>
       </div>

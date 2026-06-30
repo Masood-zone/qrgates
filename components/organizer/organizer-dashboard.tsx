@@ -5,22 +5,30 @@ import { useEvents } from "@/lib/api/events";
 import { useOrganizerOrders } from "@/lib/api/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Users, Ticket, BadgeCent } from "lucide-react";
+import { DashboardLoadingPage } from "@/components/ui/loading";
 
 export function OrganizerDashboard() {
   const { data: session } = useSession();
 
   // Get organizer's events
-  const { data: eventsData } = useEvents({
-    organizerId: session?.user?.id,
-    limit: 100,
-  });
+  const { data: eventsData, isLoading: eventsLoading } = useEvents(
+    {
+      organizerId: session?.user?.id,
+      limit: 100,
+    },
+    { enabled: !!session?.user?.id }
+  );
 
   // Get completed customer orders for the organizer's events.
-  const { data: ordersData } = useOrganizerOrders({
+  const { data: ordersData, isLoading: ordersLoading } = useOrganizerOrders({
     organizerId: session?.user?.id,
     status: "COMPLETED",
     limit: 1000,
   });
+
+  if (!session?.user?.id || eventsLoading || ordersLoading) {
+    return <DashboardLoadingPage />;
+  }
 
   const events = eventsData?.data || [];
   const orders = ordersData?.orders || [];

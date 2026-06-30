@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DashboardLoadingPage } from "@/components/ui/loading";
 
 type Organizer = { id: string; name: string | null; email: string };
 type AnalyticsData = {
@@ -17,16 +18,23 @@ export function AdminAnalyticsPage() {
   const [organizerId, setOrganizerId] = useState("ALL");
   const [status, setStatus] = useState("ALL");
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams();
     params.set("organizerId", organizerId);
     params.set("status", status);
+    setIsLoading(true);
     fetch(`/api/admin/analytics?${params.toString()}`)
       .then((res) => res.json())
       .then(setData)
-      .catch(() => setData(null));
+      .catch(() => setData(null))
+      .finally(() => setIsLoading(false));
   }, [organizerId, status]);
+
+  if (isLoading && !data) {
+    return <DashboardLoadingPage />;
+  }
 
   return (
     <div className="space-y-6">

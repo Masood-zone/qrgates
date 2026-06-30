@@ -14,9 +14,10 @@ import Link from "next/link";
 import { useUserTickets, useUserOrders, useCurrentUser } from "@/lib/services";
 import type { Ticket as TicketType } from "@/lib/services";
 import { Skeleton } from "../ui/skeleton";
+import { DashboardLoadingPage } from "@/components/ui/loading";
 
 export function DashboardOverview() {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: userLoading } = useCurrentUser();
 
   const { data: tickets = [], isLoading: ticketsLoading } = useUserTickets(
     user?.id ? user.id : undefined
@@ -24,6 +25,11 @@ export function DashboardOverview() {
   const { data: orders = [], isLoading: ordersLoading } = useUserOrders(
     user?.id || ""
   );
+
+  if (userLoading || ticketsLoading || ordersLoading) {
+    return <DashboardLoadingPage />;
+  }
+
   const now = new Date();
   const completedOrders = orders.filter(
     (order) => order.status === "COMPLETED"
@@ -196,13 +202,7 @@ export function DashboardOverview() {
                     </div>
                     <div className="text-right">
                       <p className="font-medium">Ghc{order.total.toFixed(2)}</p>
-                      <Badge
-                        variant={
-                          order.status === "COMPLETED" ? "default" : "secondary"
-                        }
-                      >
-                        {order.status}
-                      </Badge>
+                      <Badge>COMPLETED</Badge>
                     </div>
                   </div>
                 ))}
