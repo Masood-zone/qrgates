@@ -18,7 +18,7 @@ export async function GET(request: Request) {
       where: {
         startDate: { lte: now },
         endDate: { gt: now },
-        status: { not: "ONGOING" },
+        status: { notIn: ["ONGOING", "CANCELLED"] },
       },
       data: { status: "ONGOING" },
     });
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     const completedEvents = await prisma.event.updateMany({
       where: {
         endDate: { lte: now },
-        status: { not: "COMPLETED" },
+        status: { notIn: ["COMPLETED", "CANCELLED"] },
       },
       data: { status: "COMPLETED" },
     });
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     const upcomingEvents = await prisma.event.updateMany({
       where: {
         startDate: { gt: now },
-        status: { not: "UPCOMING" },
+        status: { notIn: ["UPCOMING", "CANCELLED"] },
       },
       data: { status: "UPCOMING" },
     });

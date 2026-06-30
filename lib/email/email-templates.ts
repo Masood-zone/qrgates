@@ -43,6 +43,35 @@ export function registrationConfirmationEmail({ name }: { name: string }) {
   });
 }
 
+export function organizerOnboardingEmail({
+  name,
+  email,
+  password,
+  loginUrl,
+}: {
+  name: string;
+  email: string;
+  password: string;
+  loginUrl: string;
+}) {
+  return QrGateEmailTemplate({
+    title: "Your QRGATE Organizer Account Is Ready",
+    body: `
+      <p style="margin-bottom:24px;">Hi <strong>${name}</strong>,</p>
+      <p style="margin-bottom:24px;">An administrator has created your organizer account on QRGATE. You can now sign in, create events, manage ticket types, and monitor attendees from your organizer dashboard.</p>
+      <div style="background:#f8f9fb;border:1px solid #e1e2e4;border-radius:10px;padding:18px;margin-bottom:24px;">
+        <p style="margin:0 0 8px 0;"><strong>Email:</strong> ${email}</p>
+        <p style="margin:0;"><strong>Temporary password:</strong> ${password}</p>
+      </div>
+      <p style="text-align:center;margin-bottom:24px;">
+        <a href="${loginUrl}" style="display:inline-block;padding:12px 28px;background:#ba0033;color:#ffffff;font-weight:700;border-radius:8px;text-decoration:none;font-size:1rem;">Sign in to QRGATE</a>
+      </p>
+      <p style="margin-bottom:24px;">For security, please change this password from your account settings after your first login.</p>
+      <p style="color:#5b6278;font-size:0.95rem;">Thank you for organizing with QRGATE.</p>
+    `,
+  });
+}
+
 // 2. Purchase Confirmation Email (Success)
 export function purchaseConfirmationEmail({
   name,

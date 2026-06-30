@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { requireAdmin } from "@/lib/admin-auth";
+import { transporter } from "@/lib/email/nodemailer";
+import { organizerOnboardingEmail } from "@/lib/email/email-templates";
 import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
@@ -60,7 +62,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Email already exists" }, { status: 409 });
   }
 
-  const hashedPassword = await bcrypt.hash(password || "organizer123", 12);
+  const plainPassword = password || "organizer123";
+  const hashedPassword = await bcrypt.hash(plainPassword, 12);
 
   const organizer = await prisma.user.create({
     data: {
@@ -89,5 +92,23 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return NextResponse.json({ organizer }, { status: 201 });
+  let emailSent = false;
+  try {
+    await transporter.sendMail({
+      from: `"QRGATE" <${process.env.EMAIL_USER}>`,
+      to: organizer.email,
+      subject: "Your QRGATE organizer account is ready",
+      html: organizerOnboardingEmail({
+        name: organizer.name || organizer.email,
+        email: organizer.email,
+        password: plainPassword,
+        loginUrl: `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/auth/signin`,
+      }),
+    });
+    emailSent = true;
+  } catch (error) {
+    console.error("Failed to send organizer onboarding email:", error);
+  }
+
+  return NextResponse.json({ organizer, emailSent }, { status: 201 });
 }
