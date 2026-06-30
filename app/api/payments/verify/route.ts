@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { verifyPayment } from "@/lib/paystack";
+import { completePaidOrder } from "@/lib/payments/complete-order";
 
 export async function GET(request: NextRequest) {
   try {
@@ -48,28 +49,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Update the order with payment information
-    const updatedOrder = await prisma.order.update({
-      where: { id: orderId },
-      data: {
-        status: "COMPLETED",
-        paymentMethod: "PAYSTACK",
-        paymentId: paymentData.id.toString(),
-        reference,
-      },
-      include: {
-        event: {
-          select: {
-            id: true,
-            title: true,
-            startDate: true,
-            endDate: true,
-            location: true,
-            mainImage: true,
-          },
-        },
-        tickets: true,
-      },
+    const updatedOrder = await completePaidOrder({
+      orderId,
+      paymentId: paymentData.id.toString(),
+      reference,
     });
 
     return NextResponse.json({

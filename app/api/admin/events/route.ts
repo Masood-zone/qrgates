@@ -5,6 +5,8 @@ import {
   getCategoryFilterValues,
   normalizeEventCategory,
 } from "@/lib/event-categories";
+import { validateEventDateRange } from "@/lib/event-date-validation";
+import { notifyNewUpcomingEvent } from "@/lib/email/notifications";
 
 export async function GET(request: NextRequest) {
   const { error } = await requireAdmin();
@@ -79,6 +81,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid event category" }, { status: 400 });
   }
 
+  const dateValidation = validateEventDateRange(startDate, endDate);
+  if (!dateValidation.ok) {
+    return NextResponse.json({ error: dateValidation.message }, { status: 400 });
+  }
+
   const organizer = await prisma.user.findFirst({
     where: { id: organizerId, role: "ORGANIZER", status: "ACTIVE" },
   });
@@ -103,8 +110,8 @@ export async function POST(request: NextRequest) {
       description,
       category: normalizedCategory,
       location,
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      startDate: dateValidation.startDate,
+      endDate: dateValidation.endDate,
       mainImage,
       price,
       totalTickets,
@@ -131,6 +138,8 @@ export async function POST(request: NextRequest) {
       images: true,
     },
   });
+
+  await notifyNewUpcomingEvent(event.id);
 
   return NextResponse.json({ event }, { status: 201 });
 }

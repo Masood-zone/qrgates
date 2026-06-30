@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { generateQRCode } from "@/lib/qr-code";
-import { sendTicketEmail } from "@/lib/email/sendTicketEmail";
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,7 +75,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { items, userInfo, paymentMethod, total } = body;
+    const { items } = body;
 
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "No items in order" }, { status: 400 });
@@ -178,38 +177,6 @@ export async function POST(request: NextRequest) {
 
       await prisma.ticket.createMany({
         data: ticketsToCreate,
-      });
-
-      // ✉️ Send email once with all QR codes
-      // Attach QR codes as images for better email compatibility
-      const attachments = ticketsToCreate.map((t, idx) => {
-        // Extract base64 from data URL
-        const base64 = t.qrCode.split(",")[1];
-        return {
-          filename: `ticket-${idx + 1}.png`,
-          content: base64,
-          encoding: "base64",
-          cid: `qrcode${idx + 1}@tickets.qrgate.app`,
-        };
-      });
-
-      await sendTicketEmail({
-        user: {
-          name: session.user.name ?? null,
-          email: session.user.email!,
-        },
-        tickets: ticketsToCreate.map((t, idx) => ({
-          qrCode: `cid:qrcode${idx + 1}@tickets.qrgate.app`,
-          type: t.type,
-          price: t.price,
-        })),
-        event: {
-          title: order.event.title,
-          location: order.event.location,
-          startDate: order.event.startDate,
-          endDate: order.event.endDate,
-        },
-        attachments,
       });
 
       await prisma.ticketType.update({
