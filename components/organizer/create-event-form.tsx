@@ -39,33 +39,55 @@ import { ImageGalleryUpload } from "@/components/ui/image-gallery-upload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { EVENT_CATEGORIES } from "@/lib/event-categories";
+import { isDateOnOrAfterToday, startOfDay } from "@/lib/event-date-validation";
 
-const formSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
-  category: z.string().min(1, "Please select a category"),
-  location: z.string().min(5, "Location must be at least 5 characters"),
-  startDate: z.date({
-    required_error: "Start date is required",
-  }),
-  startTime: z.string().min(1, "Start time is required"),
-  endDate: z.date({
-    required_error: "End date is required",
-  }),
-  endTime: z.string().min(1, "End time is required"),
-  ticketTypes: z
-    .array(
-      z.object({
-        name: z.string().min(1, "Ticket type name is required"),
-        price: z.number().min(0, "Price must be a positive number"),
-        quantity: z.number().int().min(1, "Quantity must be at least 1"),
-        description: z.string().optional(),
+function getEventDateTime(date: Date, time: string) {
+  return new Date(`${date.toISOString().split("T")[0]}T${time}:00`);
+}
+
+const formSchema = z
+  .object({
+    title: z.string().min(5, "Title must be at least 5 characters"),
+    description: z.string().min(20, "Description must be at least 20 characters"),
+    category: z.string().min(1, "Please select a category"),
+    location: z.string().min(5, "Location must be at least 5 characters"),
+    startDate: z
+      .date({
+        required_error: "Start date is required",
       })
-    )
-    .min(1, "At least one ticket type is required"),
-  mainImage: z.string().optional(),
-  images: z.array(z.string()).optional(),
-});
+      .refine(isDateOnOrAfterToday, "Start date cannot be in the past"),
+    startTime: z.string().min(1, "Start time is required"),
+    endDate: z
+      .date({
+        required_error: "End date is required",
+      })
+      .refine(isDateOnOrAfterToday, "End date cannot be in the past"),
+    endTime: z.string().min(1, "End time is required"),
+    ticketTypes: z
+      .array(
+        z.object({
+          name: z.string().min(1, "Ticket type name is required"),
+          price: z.number().min(0, "Price must be a positive number"),
+          quantity: z.number().int().min(1, "Quantity must be at least 1"),
+          description: z.string().optional(),
+        })
+      )
+      .min(1, "At least one ticket type is required"),
+    mainImage: z.string().optional(),
+    images: z.array(z.string()).optional(),
+  })
+  .superRefine((values, ctx) => {
+    const startDateTime = getEventDateTime(values.startDate, values.startTime);
+    const endDateTime = getEventDateTime(values.endDate, values.endTime);
+
+    if (endDateTime.getTime() < startDateTime.getTime()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date and time must be after the start date and time",
+        path: ["endDate"],
+      });
+    }
+  });
 
 export function CreateEventForm() {
   const router = useRouter();
@@ -110,6 +132,10 @@ export function CreateEventForm() {
       images: [],
     },
   });
+
+  const today = startOfDay(new Date());
+  const selectedStartDate = form.watch("startDate");
+  const minimumEndDate = selectedStartDate ? startOfDay(selectedStartDate) : today;
 
   const addTicketType = () => {
     const currentTicketTypes = form.getValues("ticketTypes") || [];
@@ -194,12 +220,8 @@ export function CreateEventForm() {
       const defaultTicketType = values.ticketTypes[0];
 
       // Combine date and time for proper DateTime objects
-      const startDateTime = new Date(
-        `${values.startDate.toISOString().split("T")[0]}T${values.startTime}:00`
-      );
-      const endDateTime = new Date(
-        `${values.endDate.toISOString().split("T")[0]}T${values.endTime}:00`
-      );
+      const startDateTime = getEventDateTime(values.startDate, values.startTime);
+      const endDateTime = getEventDateTime(values.endDate, values.endTime);
 
       await createEventMutation.mutateAsync({
         title: values.title,
@@ -338,7 +360,14 @@ export function CreateEventForm() {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={(date) => {
+                            field.onChange(date);
+                            const endDate = form.getValues("endDate");
+                            if (date && endDate && startOfDay(endDate) < startOfDay(date)) {
+                              form.setValue("endDate", date);
+                            }
+                          }}
+                          disabled={(date) => startOfDay(date) < today}
                           initialFocus
                         />
                       </PopoverContent>
@@ -394,6 +423,7 @@ export function CreateEventForm() {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
+                          disabled={(date) => startOfDay(date) < minimumEndDate}
                           initialFocus
                         />
                       </PopoverContent>
