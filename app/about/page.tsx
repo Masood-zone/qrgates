@@ -1,6 +1,14 @@
 "use client";
 
-import { Code2, Mail, MapPin, Phone, ShieldCheck, Sparkles, Users } from "lucide-react";
+import {
+  Code2,
+  Mail,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,10 +17,30 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAbout } from "@/lib/api/about";
 
 const fallbackBuilders = [
-  { id: "1", name: "Resford Gyasi Appiah", role: "Builder", bio: "Student ID: 5221040153" },
-  { id: "2", name: "Twumasi Solomon", role: "Builder", bio: "Student ID: 5221040150" },
-  { id: "3", name: "Asamoah Evans", role: "Builder", bio: "Student ID: 5221040149" },
-  { id: "4", name: "Allotey Ernest", role: "Builder", bio: "Student ID: 5221040192" },
+  {
+    id: "1",
+    name: "Resford Gyasi Appiah",
+    role: "Builder",
+    bio: "Student ID: 5221040153",
+  },
+  {
+    id: "2",
+    name: "Twumasi Solomon",
+    role: "Builder",
+    bio: "Student ID: 5221040150",
+  },
+  {
+    id: "3",
+    name: "Asamoah Evans",
+    role: "Builder",
+    bio: "Student ID: 5221040149",
+  },
+  {
+    id: "4",
+    name: "Allotey Ernest",
+    role: "Builder",
+    bio: "Student ID: 5221040192",
+  },
 ];
 
 function initials(name: string) {
@@ -32,9 +60,9 @@ export default function AboutPage() {
       ? aboutData.teamMembers
       : fallbackBuilders;
   const contact = aboutData?.contact || {
-    email: "info@quickgates.me",
+    email: "quickgatesevent@gmail.com",
     phone: "+233 59 834 6928",
-    website: "https://quickgates.vercel.app",
+    website: "https://qrgates.vercel.app",
   };
 
   if (isLoading) {
@@ -100,7 +128,11 @@ export default function AboutPage() {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { label: "Builders", value: teamMembers.length, icon: Users },
-                  { label: "Founded", value: aboutData?.founded || 2026, icon: Sparkles },
+                  {
+                    label: "Founded",
+                    value: aboutData?.founded || 2026,
+                    icon: Sparkles,
+                  },
                   { label: "Focus", value: "QR", icon: ShieldCheck },
                   { label: "Stack", value: "Next", icon: Code2 },
                 ].map((item) => (
@@ -166,7 +198,10 @@ export default function AboutPage() {
               <Mail className="h-8 w-8 text-primary" />
               <div>
                 <p className="font-bold">Email</p>
-                <a className="text-sm text-muted-foreground" href={`mailto:${contact.email}`}>
+                <a
+                  className="text-sm text-muted-foreground"
+                  href={`mailto:${contact.email}`}
+                >
                   {contact.email}
                 </a>
               </div>
@@ -177,7 +212,10 @@ export default function AboutPage() {
               <Phone className="h-8 w-8 text-primary" />
               <div>
                 <p className="font-bold">Phone</p>
-                <a className="text-sm text-muted-foreground" href={`tel:${contact.phone}`}>
+                <a
+                  className="text-sm text-muted-foreground"
+                  href={`tel:${contact.phone}`}
+                >
                   {contact.phone}
                 </a>
               </div>
