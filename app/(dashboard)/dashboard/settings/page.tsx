@@ -1,7 +1,7 @@
 import { SettingsPage } from "@/components/dashboard/settings-page"
 
 export const metadata = {
-  title: "Settings | QRGate",
+  title: "Settings | QuickGates",
   description: "Manage your account settings and preferences",
 }
 

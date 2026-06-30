@@ -1,7 +1,7 @@
 import { CartPage } from "@/components/cart/cart-page"
 
 export const metadata = {
-  title: "Shopping Cart | QRGate",
+  title: "Shopping Cart | QuickGates",
   description: "Review your selected tickets",
 }
 

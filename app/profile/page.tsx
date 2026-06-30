@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { ProfileForm } from "@/components/profile/profile-form";
 
 export const metadata = {
-  title: "Profile | QRGate",
+  title: "Profile | QuickGates",
   description: "Manage your profile settings",
 };
 

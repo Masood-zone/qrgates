@@ -3,17 +3,17 @@ import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma";
 
 const adminSeed = {
-  email: process.env.ADMIN_EMAIL || "admin@qrgates.com",
+  email: process.env.ADMIN_EMAIL || "admin@quickgates.com",
   password: process.env.ADMIN_PASSWORD || "admin123",
   name: process.env.ADMIN_NAME || "Super Admin",
   phone: process.env.ADMIN_PHONE || "+233200000000",
-  address: process.env.ADMIN_ADDRESS || "QRGates Admin Office, Kumasi, Ghana",
+  address: process.env.ADMIN_ADDRESS || "QuickGates Admin Office, Kumasi, Ghana",
 };
 
 const organizerSeed = {
-  email: process.env.SEED_ORGANIZER_EMAIL || "organizer@qrgates.com",
+  email: process.env.SEED_ORGANIZER_EMAIL || "organizer@quickgates.com",
   password: process.env.SEED_ORGANIZER_PASSWORD || "organizer123",
-  name: process.env.SEED_ORGANIZER_NAME || "QRGates Demo Organizer",
+  name: process.env.SEED_ORGANIZER_NAME || "QuickGates Demo Organizer",
   phone: process.env.SEED_ORGANIZER_PHONE || "+233598346928",
   address: "Kumasi, Ashanti Region, Ghana",
 };
@@ -146,7 +146,7 @@ async function seedAbout() {
       vision:
         "To become a trusted student-built ticketing platform for reliable, secure, and fast entry validation for entertainment events in Kumasi.",
       story:
-        "QRGates was built as a practical event booking system focused on club jams and concert parties in Kumasi, helping organizers manage publicity, ticket sales, QR ticket issuance, and entrance validation from one platform.",
+        "QuickGates was built as a practical event booking system focused on club jams and concert parties in Kumasi, helping organizers manage publicity, ticket sales, QR ticket issuance, and entrance validation from one platform.",
       founded: 2026,
       location: "Kumasi, Ashanti Region, Ghana",
       teamSize: builders.length,
@@ -160,9 +160,9 @@ async function seedAbout() {
         "Accessibility",
         "Execution",
       ]),
-      contactEmail: "info@qrgates.me",
+      contactEmail: "info@quickgates.me",
       contactPhone: "+233 59 834 6928",
-      contactWebsite: "https://qrgates.vercel.app",
+      contactWebsite: "https://quickgates.vercel.app",
     },
     create: {
       id: "qrgates-about",
@@ -171,7 +171,7 @@ async function seedAbout() {
       vision:
         "To become a trusted student-built ticketing platform for reliable, secure, and fast entry validation for entertainment events in Kumasi.",
       story:
-        "QRGates was built as a practical event booking system focused on club jams and concert parties in Kumasi, helping organizers manage publicity, ticket sales, QR ticket issuance, and entrance validation from one platform.",
+        "QuickGates was built as a practical event booking system focused on club jams and concert parties in Kumasi, helping organizers manage publicity, ticket sales, QR ticket issuance, and entrance validation from one platform.",
       founded: 2026,
       location: "Kumasi, Ashanti Region, Ghana",
       teamSize: builders.length,
@@ -185,9 +185,9 @@ async function seedAbout() {
         "Accessibility",
         "Execution",
       ]),
-      contactEmail: "info@qrgates.me",
+      contactEmail: "info@quickgates.me",
       contactPhone: "+233 59 834 6928",
-      contactWebsite: "https://qrgates.vercel.app",
+      contactWebsite: "https://quickgates.vercel.app",
     },
     select: { id: true },
   });

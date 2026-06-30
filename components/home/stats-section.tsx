@@ -38,7 +38,7 @@ export function StatsSection() {
             </h2>
             <p className="mt-3 text-sm leading-6 text-slate-300">
               Whether you host campus programs, corporate sessions, or live
-              entertainment, QRGates keeps ticketing organized.
+              entertainment, QuickGates keeps ticketing organized.
             </p>
           </div>
           <div className="flex items-center gap-2 text-sm font-bold text-rose-200">

@@ -151,7 +151,7 @@ export function Footer() {
         <Separator className="my-10 bg-white/10" />
 
         <div className="flex flex-col items-center justify-between gap-5 text-sm text-slate-300 md:flex-row">
-          <p>Copyright 2026 QRGate. All rights reserved.</p>
+          <p>Copyright 2026 QuickGates. All rights reserved.</p>
           <div className="flex items-center gap-5">
             <Link href="/privacy" className="hover:text-white">
               Privacy Policy

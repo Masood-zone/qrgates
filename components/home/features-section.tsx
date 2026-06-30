@@ -32,7 +32,7 @@ export function FeaturesSection() {
             Seamless Experience for Organizers
           </h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            From the first draft to entry verification, QRGates keeps every
+            From the first draft to entry verification, QuickGates keeps every
             event workflow clear and quick.
           </p>
         </div>

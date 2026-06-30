@@ -32,9 +32,9 @@ export default function AboutPage() {
       ? aboutData.teamMembers
       : fallbackBuilders;
   const contact = aboutData?.contact || {
-    email: "info@qrgates.me",
+    email: "info@quickgates.me",
     phone: "+233 59 834 6928",
-    website: "https://qrgates.vercel.app",
+    website: "https://quickgates.vercel.app",
   };
 
   if (isLoading) {
@@ -71,11 +71,11 @@ export default function AboutPage() {
               Student-built ticketing platform
             </Badge>
             <h1 className="max-w-3xl text-4xl font-extrabold leading-tight md:text-6xl">
-              Built by the team behind QRGates
+              Built by the team behind QuickGates
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300">
               {aboutData?.story ||
-                "QRGates brings event discovery, booking, and QR verification into one simple system for organizers and attendees."}
+                "QuickGates brings event discovery, booking, and QR verification into one simple system for organizers and attendees."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-xl">

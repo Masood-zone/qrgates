@@ -20,7 +20,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${event.title} | QRGate`,
+    title: `${event.title} | QuickGates`,
     description: event.description,
   };
 }

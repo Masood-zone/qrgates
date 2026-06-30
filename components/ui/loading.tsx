@@ -45,7 +45,7 @@ export function LoadingPage({
           <div className="relative bg-white dark:bg-background rounded-full p-4 shadow-lg">
             <Image
               src={logoUrl || "/placeholder.svg"}
-              alt="QRGate Logo"
+              alt="QuickGates Logo"
               width={80}
               height={80}
               className="w-20 h-20 object-contain"
@@ -97,7 +97,7 @@ export function LoadingPage({
 }
 
 export function AppLoadingPage() {
-  return <LoadingPage message="Initializing QRGate..." showProgress />;
+  return <LoadingPage message="Initializing QuickGates..." showProgress />;
 }
 
 export function AuthLoadingPage() {

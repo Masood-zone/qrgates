@@ -1,7 +1,7 @@
 import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
 
 export const metadata = {
-  title: "Dashboard | QRGate",
+  title: "Dashboard | QuickGates",
   description: "Your personal dashboard",
 };
 

@@ -1,7 +1,7 @@
 import { OrderHistoryPage } from "@/components/dashboard/order-history-page"
 
 export const metadata = {
-  title: "Order History | QRGate",
+  title: "Order History | QuickGates",
   description: "View your order history and transaction details",
 }
 

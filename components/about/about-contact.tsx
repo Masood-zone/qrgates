@@ -19,7 +19,7 @@ export function AboutContact({
   contact = {
     email: "edwin.kofi.nyarkoh@gmail.com",
     phone: "+233 59 834 6928",
-    website: "https://qrgates.vercel.app/events",
+    website: "https://quickgates.vercel.app/events",
   },
   location = "Central Region, GHANA",
 }: AboutContactProps) {

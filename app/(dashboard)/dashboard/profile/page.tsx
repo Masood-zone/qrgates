@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth"
 import { ProfilePage } from "@/components/dashboard/profile-page"
 
 export const metadata = {
-  title: "Profile | QRGate",
+  title: "Profile | QuickGates",
   description: "Manage your profile settings",
 }
 

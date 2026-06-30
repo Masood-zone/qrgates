@@ -148,7 +148,7 @@ export async function verifyPayment(
     //   // Here you can send an email notification to the user
     //   // For example, using a mail service like nodemailer
     //   await transporter.sendMail({
-    //     from: `"QRGATE" <${process.env.EMAIL_USER}>`,
+    //     from: `"QuickGates" <${process.env.EMAIL_USER}>`,
     //     to: paymentData.customer.email,
     //     subject: "Payment Successful",
     //     html: purchaseConfirmationEmail({
@@ -165,7 +165,7 @@ export async function verifyPayment(
     //   console.error("Payment verification failed:", response.data.message);
     //   // Send an email notification for failed payment
     //   await transporter.sendMail({
-    //     from: `"QRGATE" <${process.env.EMAIL_USER}>`,
+    //     from: `"QuickGates" <${process.env.EMAIL_USER}>`,
     //     to: response.data.data.customer.email,
     //     subject: "Payment Failed",
     //     html: purchaseFailureEmail({

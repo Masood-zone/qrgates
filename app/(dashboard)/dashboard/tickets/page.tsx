@@ -1,7 +1,7 @@
 import { TicketsPage } from "@/components/dashboard/tickets-page"
 
 export const metadata = {
-  title: "My Tickets | QRGate",
+  title: "My Tickets | QuickGates",
   description: "View and manage your tickets",
 }
 

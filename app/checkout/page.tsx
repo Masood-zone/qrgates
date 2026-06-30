@@ -1,7 +1,7 @@
 import { CheckoutPage } from "@/components/checkout/checkout-page"
 
 export const metadata = {
-  title: "Checkout | QRGate",
+  title: "Checkout | QuickGates",
   description: "Complete your ticket purchase",
 }
 

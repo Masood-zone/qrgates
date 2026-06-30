@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
         vision:
           "To become a trusted student-built ticketing platform for reliable, secure event access.",
         story:
-          "QRGates was built as a practical event booking system focused on clear public discovery, fast checkout, and dependable QR-based entry.",
+          "QuickGates was built as a practical event booking system focused on clear public discovery, fast checkout, and dependable QR-based entry.",
         founded: 2026,
         location: "University of Cape Coast, Ghana",
         teamSize: 4,
@@ -74,15 +74,15 @@ export async function GET(request: NextRequest) {
           "Accessibility",
           "Execution",
         ],
-        contactEmail: "info@qrgates.me",
+        contactEmail: "info@quickgates.me",
         contactPhone: "+233 59 834 6928",
-        contactWebsite: "https://qrgates.vercel.app",
+        contactWebsite: "https://quickgates.vercel.app",
         createdAt: now,
         updatedAt: now,
         contact: {
-          email: "info@qrgates.me",
+          email: "info@quickgates.me",
           phone: "+233 59 834 6928",
-          website: "https://qrgates.vercel.app",
+          website: "https://quickgates.vercel.app",
         },
         teamMembers: builders,
       };

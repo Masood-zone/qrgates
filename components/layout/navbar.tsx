@@ -57,7 +57,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2 text-xl font-bold">
             <Image
               src="/logo.png"
-              alt="QRGates Logo"
+              alt="QuickGates Logo"
               width={40}
               height={40}
               className="h-8 w-8 rounded-lg object-cover"
@@ -69,7 +69,7 @@ export function Navbar() {
               onDragStart={(e) => e.preventDefault()}
               onContextMenu={(e) => e.preventDefault()}
             />
-            <span className="hidden text-lg font-extrabold sm:inline">QRGate</span>
+            <span className="hidden text-lg font-extrabold sm:inline">QuickGates</span>
           </Link>
         </div>
 

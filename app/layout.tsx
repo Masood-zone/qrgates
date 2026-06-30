@@ -9,7 +9,7 @@ import { Providers } from "@/components/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "QRGate - Ticket Booking App",
+  title: "QuickGates - Ticket Booking App",
   description: "The best solution for buying & selling tickets online.",
   keywords: [
     "ticket booking",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "online ticketing",
     "event management",
     "ticket marketplace",
-    "QRGate",
+    "QuickGates",
     "event booking",
     "ticket sales",
   ],
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
       url: "https://www.github.com/masood-zone",
     },
   ],
-  generator: "QRGates Dev Team",
+  generator: "QuickGates Dev Team",
 };
 
 export default function RootLayout({
