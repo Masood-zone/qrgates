@@ -1,117 +1,156 @@
-# QRGATE Ticket Booking App
+# QRGates
 
-A modern ticket booking application with QR code generation, event management, ticket sales analytics, and security officer portal. Built with Next.js, React, Prisma, TailwindCSS, Shadcn/UI, and more.
+A modern event ticketing platform with QR code generation, event discovery, admin dashboard, and security officer portal. Built with Next.js 15, React 19, Prisma 7 (PostgreSQL), TailwindCSS, and Shadcn/UI.
 
 ---
 
 ## Folder Structure
 
 ```
-QRGATE/
+QRGates/
 │
 ├── app/
+│   ├── (admin)/admin/          # Admin dashboard pages
+│   ├── (dashboard)/            # User dashboard
+│   ├── (organizer)/organizer/  # Organizer event management
 │   ├── api/
-│   │   ├── auth/
-│   │   │   └── actions.ts
-│   │   ├── cron/
-│   │   │   └── route.ts
-│   │   ├── events/
-│   │   │   └── route.ts
-│   │   └── ...
-│   ├── (dashboard)/
-│   │   └── layout.tsx
-│   ├── (organizer)/
-│   │   └── organizer/
-│   │       └── layout.tsx
-│   ├── security/
-│   │   └── [eventId]/
-│   │       └── page.tsx
-│   └── ...
+│   │   ├── admin/              # Admin API routes (users, events, organizers, analytics, security)
+│   │   ├── auth/               # Authentication (NextAuth)
+│   │   ├── cron/               # Vercel cron for event status updates
+│   │   ├── events/             # Public and organizer event endpoints
+│   │   ├── newsletter/         # Newsletter subscription
+│   │   ├── orders/             # Order management
+│   │   ├── payments/           # Paystack integration
+│   │   ├── sales/              # Ticket sales data
+│   │   ├── security/           # Security officer ticket verification
+│   │   ├── tickets/            # Ticket CRUD and scanning
+│   │   ├── users/              # User profiles and management
+│   │   └── about/              # About page data
+│   ├── auth/                   # Auth pages (signin, signup, verify)
+│   ├── events/                 # Public event pages
+│   ├── security/               # Security officer portal
+│   ├── checkout/               # Checkout flow
+│   └── assets/designs/         # Design mockups and references
 │
 ├── components/
-│   ├── home/
-│   │   └── events-section.tsx
-│   ├── organizer/
-│   │   ├── security-officers-management.tsx
-│   │   ├── ticket-sales-page.tsx
-│   │   └── ...
-│   ├── dashboard/
-│   │   ├── dashboard-header.tsx
-│   │   ├── dashboard-sidebar.tsx
-│   │   ├── tickets-page.tsx
-│   │   └── ...
-│   ├── security/
-│   │   └── scan-ticket.tsx
-│   └── ...
+│   ├── admin/                  # Admin dashboard components
+│   ├── home/                   # Landing page sections (hero, features, stats, etc.)
+│   ├── events/                 # Public event cards and listing page
+│   ├── organizer/              # Organizer event management components
+│   ├── dashboard/              # User dashboard components
+│   ├── security/               # Security scanning components
+│   ├── checkout/               # Checkout and payment components
+│   ├── layout/                 # Navbar, footer
+│   └── ui/                     # Shared Shadcn/UI primitives
 │
 ├── lib/
-│   ├── api/
-│   │   ├── events.ts
-│   │   ├── sales.ts
-│   │   ├── orders.ts
-│   │   ├── tickets.ts
-│   │   └── ...
-│   ├── prisma.ts
-│   ├── utils.ts
-│   └── ...
+│   ├── api/                    # Client-side API helpers (events, about, orders, etc.)
+│   ├── store/                  # Zustand stores (cart)
+│   ├── services/               # HTTP fetch wrappers
+│   ├── types/                  # TypeScript type definitions
+│   ├── email/                  # Nodemailer templates
+│   ├── auth.ts                 # NextAuth configuration
+│   ├── prisma.ts               # Prisma client (PrismaPg adapter)
+│   ├── admin-auth.ts           # Admin role guard middleware
+│   ├── paystack.ts             # Paystack payment integration
+│   ├── qr-code.ts              # QR code generation
+│   ├── date-utils.ts           # Date formatting helpers
+│   └── cloudinary.ts           # Image uploads
 │
 ├── prisma/
-│   ├── schema.prisma
+│   ├── schema.prisma           # Database schema
+│   ├── seed.ts                 # Seed script (admin, organizer, demo events, about)
 │   └── migrations/
 │
-├── public/
-│   ├── ... (images, icons, etc.)
-│
-├── styles/
-│   └── globals.css
-│
-├── server-cron.js
-├── .env
-├── .gitignore
-├── next.config.mjs
+├── prisma.config.ts            # Prisma 7 datasource config
+├── pnpm-workspace.yaml         # Build permissions for native deps
+├── vercel.json                 # Vercel cron schedule
 ├── package.json
 ├── pnpm-lock.yaml
-├── postcss.config.mjs
 ├── tailwind.config.ts
-├── tsconfig.json
-└── ...
+└── tsconfig.json
 ```
 
 ---
 
 ## Key Features
 
-- Event creation, management, and ticketing
-- QR code generation and scanning for tickets
-- Organizer and user dashboards
-- Security officer portal for ticket verification
-- Automated event status updates via cron job
-- Analytics for ticket sales and event performance
-- Mobile-responsive UI with TailwindCSS and Shadcn/UI
+- **Event Discovery** -- Public listing with category filtering, search, and status badges
+- **QR Code Tickets** -- Generation on purchase, scanning for entry verification
+- **Admin Dashboard** -- User management, event oversight, organizer control, analytics, security officer management
+- **User Suspension** -- Admins can suspend users; suspended accounts are blocked at login
+- **Organizer Portal** -- Event CRUD, attendee management, ticket sales tracking
+- **Security Officer Portal** -- QR-based ticket verification per event
+- **Automated Cron** -- Vercel cron updates event statuses (UPCOMING -> ONGOING -> COMPLETED)
+- **Checkout Flow** -- Paystack-powered payment with order and ticket creation
+- **Newsletter** -- Email subscription endpoint
+- **Responsive UI** -- TailwindCSS with refined light/dark theme tokens
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 15 (App Router) |
+| Database | PostgreSQL via Prisma 7 + PrismaPg adapter |
+| Auth | NextAuth.js |
+| Payments | Paystack |
+| Styling | TailwindCSS + Shadcn/UI |
+| State | Zustand (cart), React Query (server data) |
+| Hosting | Vercel |
+
+---
 
 ## Getting Started
 
 1. **Install dependencies:**
    ```bash
-   npm install
-   # or
    pnpm install
    ```
-2. **Set up your `.env` file** (see provided example)
-3. **Run the development server:**
+
+2. **Configure environment:**
    ```bash
-   npm run dev
+   cp .env.example .env
+   # Fill in DATABASE_URL, JWT_SECRET, CRON_SECRET, NEXTAUTH_SECRET, etc.
    ```
-4. **(Optional) Start the cron job:**
+
+3. **Run migrations and seed:**
    ```bash
-   node server-cron.js
+   pnpm prisma migrate dev
+   pnpm seed:admin
    ```
+
+4. **Start the dev server:**
+   ```bash
+   pnpm dev
+   ```
+
+---
+
+## Seed Script
+
+```bash
+pnpm seed:admin
+```
+
+Seeds an admin user, an organizer user, six demo events (various statuses), and about page data. Credentials and details can be overridden via environment variables (see `prisma/seed.ts`).
 
 ---
 
 ## Environment Variables
 
-See `.env` for all required configuration, including database, email, Paystack, Cloudinary, and cron secret keys.
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `JWT_SECRET` | NextAuth session secret |
+| `NEXTAUTH_SECRET` | NextAuth encryption secret |
+| `NEXTAUTH_URL` | App base URL |
+| `CRON_SECRET` | Bearer token for Vercel cron endpoint |
+| `PAYSTACK_SECRET_KEY` | Paystack payment integration |
+| `CLOUDINARY_*` | Image upload configuration |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Seed admin credentials |
+| `SEED_ORGANIZER_EMAIL` / `SEED_ORGANIZER_PASSWORD` | Seed organizer credentials |
 
 ---
 
