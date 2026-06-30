@@ -27,6 +27,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDate } from "@/lib/date-utils";
+import { ImageGalleryUpload } from "@/components/ui/image-gallery-upload";
+import { ImageUpload } from "@/components/ui/image-upload";
+import {
+  EVENT_CATEGORIES,
+  getEventCategoryLabel,
+  normalizeEventCategory,
+} from "@/lib/event-categories";
 
 type Organizer = { id: string; name: string | null; email: string };
 type EventItem = {
@@ -38,6 +45,7 @@ type EventItem = {
   startDate: string;
   endDate: string;
   mainImage?: string | null;
+  images?: Array<{ id: string; url: string }>;
   status: "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
   soldTickets: number;
   totalTickets: number;
@@ -60,6 +68,7 @@ const emptyForm = {
   category: "conference",
   location: "",
   mainImage: "",
+  images: [] as string[],
   organizerId: "",
   startDate: "",
   endDate: "",
@@ -71,18 +80,7 @@ const emptyForm = {
 };
 
 const statusOptions = ["UPCOMING", "ONGOING", "COMPLETED", "CANCELLED"];
-const categoryOptions = [
-  "conference",
-  "workshop",
-  "seminar",
-  "networking",
-  "concert",
-  "festival",
-  "exhibition",
-  "sports",
-  "charity",
-  "other",
-];
+const categoryOptions = EVENT_CATEGORIES;
 
 export function AdminEventsPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -134,9 +132,10 @@ export function AdminEventsPage() {
       id: event.id,
       title: event.title,
       description: event.description || "",
-      category: event.category,
+      category: normalizeEventCategory(event.category) ?? "conference",
       location: event.location,
       mainImage: event.mainImage || "",
+      images: event.images?.map((image) => image.url) || [],
       organizerId: event.organizer.id,
       startDate: new Date(event.startDate).toISOString().slice(0, 16),
       endDate: new Date(event.endDate).toISOString().slice(0, 16),
@@ -159,6 +158,7 @@ export function AdminEventsPage() {
       category: form.category,
       location: form.location,
       mainImage: form.mainImage || undefined,
+      images: form.images,
       organizerId: form.organizerId,
       startDate: normalizedStart,
       endDate: normalizedEnd,
@@ -350,6 +350,9 @@ export function AdminEventsPage() {
                       <div className="text-muted-foreground">
                         {event.organizer.name || event.organizer.email}
                       </div>
+                      <div className="text-muted-foreground">
+                        {getEventCategoryLabel(event.category)}
+                      </div>
                     </div>
                   </div>
                   <DropdownMenu>
@@ -450,8 +453,8 @@ export function AdminEventsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {categoryOptions.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                          <SelectItem key={category.value} value={category.value}>
+                            {category.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -476,22 +479,22 @@ export function AdminEventsPage() {
 
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <Label>Main Event Image URL</Label>
-                  <Input value={form.mainImage} onChange={(e) => setForm({ ...form, mainImage: e.target.value })} placeholder="https://..." />
+                  <Label>Main Event Image</Label>
+                  <ImageUpload
+                    key={`main-${form.id || "new"}-${form.mainImage}`}
+                    folder="events"
+                    defaultImage={form.mainImage}
+                    onUpload={(url) => setForm({ ...form, mainImage: url })}
+                  />
                 </div>
-                <div className="rounded-lg border-2 border-dashed border-border p-4">
-                  <div className="relative aspect-video overflow-hidden rounded-md bg-muted">
-                    {form.mainImage ? (
-                      <Image src={form.mainImage} alt="Event preview" fill className="object-cover" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                        Add an image URL to preview the event cover.
-                      </div>
-                    )}
-                  </div>
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    This mirrors the organizer event creation layout while keeping admin creation lightweight.
-                  </p>
+                <div className="space-y-2">
+                  <Label>Gallery Images</Label>
+                  <ImageGalleryUpload
+                    key={`gallery-${form.id || "new"}-${form.images.join("|")}`}
+                    folder="events"
+                    defaultImages={form.images}
+                    onUpload={(urls) => setForm({ ...form, images: urls })}
+                  />
                 </div>
               </div>
             </div>

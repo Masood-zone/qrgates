@@ -25,14 +25,21 @@ export function DashboardOverview() {
     user?.id || ""
   );
   const now = new Date();
-  const upcomingTickets = tickets?.filter(
-    (ticket: TicketType) =>
-      ticket?.event && new Date(ticket.event.endDate) >= now && !ticket.isUsed
-  );
-
   const completedOrders = orders.filter(
     (order) => order.status === "COMPLETED"
   );
+  const completedOrderIds = new Set(completedOrders.map((order) => order.id));
+  const completedTickets = tickets.filter((ticket: TicketType) =>
+    completedOrderIds.has(ticket.order?.id)
+  );
+  const upcomingTickets = tickets?.filter(
+    (ticket: TicketType) =>
+      ticket?.event &&
+      completedOrderIds.has(ticket.order?.id) &&
+      new Date(ticket.event.endDate) >= now &&
+      !ticket.isUsed
+  );
+
   const totalSpent = completedOrders.reduce(
     (sum, order) => sum + order.total,
     0
@@ -49,8 +56,8 @@ export function DashboardOverview() {
     },
     {
       title: "Total Orders",
-      value: orders.length,
-      description: "All time",
+      value: completedOrders.length,
+      description: "Completed",
       icon: ShoppingBag,
       color: "text-primary",
       bgColor: "bg-green-100",
@@ -65,7 +72,8 @@ export function DashboardOverview() {
     },
     {
       title: "Events Attended",
-      value: tickets.filter((t: { isUsed: boolean }) => t.isUsed).length,
+      value: completedTickets.filter((t: { isUsed: boolean }) => t.isUsed)
+        .length,
       description: "Completed",
       icon: Calendar,
       color: "text-orange-600",
@@ -173,9 +181,9 @@ export function DashboardOverview() {
                   </div>
                 ))}
               </div>
-            ) : orders.length > 0 ? (
+            ) : completedOrders.length > 0 ? (
               <div className="space-y-4">
-                {orders.slice(0, 3).map((order) => (
+                {completedOrders.slice(0, 3).map((order) => (
                   <div
                     key={order.id}
                     className="flex items-center justify-between"

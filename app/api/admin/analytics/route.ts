@@ -45,7 +45,12 @@ export async function GET(request: NextRequest) {
     prisma.user.count({ where: { role: "USER" } }),
     prisma.user.count({ where: { role: "ORGANIZER" } }),
     prisma.event.count({ where: eventWhere }),
-    prisma.ticket.count({ where: { event: eventWhere } }),
+    prisma.ticket.count({
+      where: {
+        event: eventWhere,
+        order: { status: "COMPLETED" },
+      },
+    }),
     prisma.order.count({ where: orderWhere }),
     prisma.order.aggregate({ where: orderWhere, _sum: { total: true } }),
     prisma.user.findMany({
@@ -62,7 +67,10 @@ export async function GET(request: NextRequest) {
         totalTickets: true,
         price: true,
         organizer: { select: { name: true, email: true } },
-        orders: { where: { status: "COMPLETED" }, select: { total: true } },
+        orders: {
+          where: { status: "COMPLETED" },
+          select: { total: true, tickets: { select: { id: true } } },
+        },
       },
       orderBy: { soldTickets: "desc" },
       take: 8,
@@ -117,7 +125,10 @@ export async function GET(request: NextRequest) {
       id: event.id,
       title: event.title,
       organizer: event.organizer.name || event.organizer.email,
-      soldTickets: event.soldTickets,
+      soldTickets: event.orders.reduce(
+        (sum, order) => sum + order.tickets.length,
+        0
+      ),
       totalTickets: event.totalTickets,
       revenue: event.orders.reduce((sum, order) => sum + order.total, 0),
     })),
