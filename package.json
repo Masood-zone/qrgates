@@ -19,6 +19,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma migrate dev && next build",
+    "seed:admin": "tsx prisma/seed.ts",
     "start": "next start",
     "lint": "next lint"
   },
