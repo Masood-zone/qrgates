@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, Loader2 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
 import { toast } from "sonner";
+import { isPastDate } from "@/lib/cart-utils";
 
 interface BuyNowButtonProps {
   event: any;
@@ -25,8 +26,11 @@ export function BuyNowButton({
   const [isLoading, setIsLoading] = useState(false);
 
   const availableTickets = ticketType.quantity - ticketType.soldCount;
+  const isPastEvent = isPastDate(event.endDate);
 
   const handleBuyNow = async () => {
+    if (isPastEvent) return;
+
     setIsLoading(true);
     addItem({
       id: `${event.id}-${ticketType.id}-${Date.now()}`,
@@ -34,6 +38,7 @@ export function BuyNowButton({
       eventTitle: event.title,
       eventImage: event.mainImage || undefined,
       eventDate: event.startDate.toString(),
+      eventEndDate: event.endDate.toString(),
       eventLocation: event.location,
       ticketType: ticketType.name,
       ticketTypeId: ticketType.id,
@@ -59,14 +64,14 @@ export function BuyNowButton({
       onClick={handleBuyNow}
       variant="outline"
       className="w-full"
-      disabled={isLoading || disabled}
+      disabled={isLoading || disabled || isPastEvent}
     >
       {isLoading ? (
         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
       ) : (
         <ShoppingBag className="w-4 h-4 mr-2" />
       )}
-      Buy Now
+      {isPastEvent ? "Event Ended" : "Buy Now"}
     </Button>
   );
 }

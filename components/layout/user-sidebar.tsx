@@ -25,9 +25,9 @@ export function UserSidebar({ onClose }: { onClose: () => void }) {
   const { data: user, isLoading: loadingUserSession } = useCurrentUser({
     enabled: !!session,
   });
-  const { items, getTotalPrice } = useCartStore();
+  const { getActiveItems, getTotalPrice } = useCartStore();
   const cartTotal = getTotalPrice();
-  const cartItemCount = items.reduce(
+  const cartItemCount = getActiveItems().reduce(
     (sum, item) =>
       sum + (typeof item?.quantity === "number" ? item.quantity : 0),
     0

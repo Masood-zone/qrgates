@@ -18,20 +18,26 @@ import { useCartStore } from "@/lib/store/cart-store";
 import { formatDateTime } from "@/lib/date-utils";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function CartPage() {
   const {
-    items,
     removeItem,
     updateQuantity,
     getTotalPrice,
     getTotalItems, // <-- use getTotalItems instead of getTotalItems
+    getActiveItems,
+    pruneExpiredItems,
     clearCart,
   } = useCartStore();
   const [discountCode, setDiscountCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState(0);
 
+  useEffect(() => {
+    pruneExpiredItems();
+  }, [pruneExpiredItems]);
+
+  const activeItems = getActiveItems();
   const totalItems = getTotalItems(); // <-- use getCount()
   const subtotal = getTotalPrice();
   const discount = (subtotal * appliedDiscount) / 100;
@@ -48,7 +54,7 @@ export function CartPage() {
     }
   };
 
-  if (items.length === 0) {
+  if (activeItems.length === 0) {
     return (
       <div className="min-h-screen py-12">
         <div className="max-w-4xl mx-auto px-4">
@@ -85,7 +91,7 @@ export function CartPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {items.map((item, index) => (
+            {activeItems.map((item, index) => (
               <Card key={item.id ?? `cart-item-${index}`}>
                 <CardContent className="p-6">
                   <div className="flex gap-4">

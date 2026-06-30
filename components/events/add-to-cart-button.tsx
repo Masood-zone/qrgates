@@ -6,6 +6,7 @@ import { ShoppingCart, Plus, Minus } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
 import { toast } from "sonner";
 import type { Event, TicketType } from "@/lib/types/api";
+import { isPastDate } from "@/lib/cart-utils";
 
 interface AddToCartButtonProps {
   event: Event;
@@ -41,8 +42,11 @@ export function AddToCartButton({
 
   // Calculate available tickets for the selected type
   const availableTickets = ticketType.quantity - ticketType.soldCount;
+  const isPastEvent = isPastDate(event.endDate);
 
   const handleAddToCart = () => {
+    if (isPastEvent) return;
+
     if (showQuantity) {
       addItem({
         id: `${event.id}-${ticketType.id}-${Date.now()}`,
@@ -50,6 +54,7 @@ export function AddToCartButton({
         eventTitle: event.title,
         eventImage: event.mainImage || undefined,
         eventDate: event.startDate.toString(),
+        eventEndDate: event.endDate.toString(),
         eventLocation: event.location,
         ticketType: ticketType.name,
         ticketTypeId: ticketType.id,
@@ -122,10 +127,10 @@ export function AddToCartButton({
     <Button
       onClick={handleAddToCart}
       className={className}
-      disabled={availableTickets <= 0 || isInCart}
+      disabled={availableTickets <= 0 || isInCart || isPastEvent}
     >
       <ShoppingCart className="w-4 h-4 mr-2" />
-      {isInCart ? "In Cart" : "Add to Cart"}
+      {isPastEvent ? "Event Ended" : isInCart ? "In Cart" : "Add to Cart"}
     </Button>
   );
 }

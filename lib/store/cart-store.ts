@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { getActiveCartItems, isCartItemExpired } from "@/lib/cart-utils";
 
 export interface CartItem {
   id: string;
@@ -7,6 +8,7 @@ export interface CartItem {
   eventTitle?: string;
   eventImage?: string;
   eventDate?: string;
+  eventEndDate?: string;
   eventLocation?: string;
   ticketType?: string;
   ticketTypeId?: string;
@@ -26,6 +28,8 @@ interface CartState {
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  getActiveItems: () => CartItem[];
+  pruneExpiredItems: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
   getItemById: (id: string) => CartItem | undefined;
@@ -39,6 +43,8 @@ export const useCartStore = create<CartState>()(
       isOpen: false,
 
       addItem: (newItem) => {
+        if (isCartItemExpired(newItem)) return;
+
         const items = get().items;
         const existingItemIndex = items.findIndex(
           (item) =>
@@ -98,22 +104,30 @@ export const useCartStore = create<CartState>()(
         set({ items: [] });
       },
 
+      getActiveItems: () => {
+        return getActiveCartItems(get().items);
+      },
+
+      pruneExpiredItems: () => {
+        set({ items: getActiveCartItems(get().items) });
+      },
+
       getTotalItems: () => {
-        return get().items.reduce(
+        return get().getActiveItems().reduce(
           (total, item) => total + (item?.quantity ?? 0),
           0
         );
       },
 
       getTotalPrice: () => {
-        return get().items.reduce(
+        return get().getActiveItems().reduce(
           (total, item) => total + (item?.price ?? 0) * (item?.quantity ?? 0),
           0
         );
       },
 
       getItemById: (id) => {
-        return get().items.find((item) => item.id === id);
+        return get().getActiveItems().find((item) => item.id === id);
       },
 
       setIsOpen: (isOpen) => {

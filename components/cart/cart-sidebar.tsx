@@ -15,21 +15,28 @@ import { useCartStore } from "@/lib/store/cart-store";
 import { formatDateTime } from "@/lib/date-utils";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export function CartSidebar({ onClose }: { onClose?: () => void }) {
   const {
-    items,
     removeItem,
     updateQuantity,
     getTotalPrice,
     getTotalItems,
+    getActiveItems,
+    pruneExpiredItems,
     clearCart,
   } = useCartStore();
 
+  useEffect(() => {
+    pruneExpiredItems();
+  }, [pruneExpiredItems]);
+
+  const activeItems = getActiveItems();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 
-  if (items.length === 0) {
+  if (activeItems.length === 0) {
     return (
       <div className="h-full flex flex-col">
         <div className="p-4 border-b">
@@ -62,7 +69,7 @@ export function CartSidebar({ onClose }: { onClose?: () => void }) {
 
       {/* Cart Items */}
       <div className="flex-1 overflow-y-auto space-y-4 py-4">
-        {items.map((item, index) => (
+        {activeItems.map((item, index) => (
           <div
             key={item.id ?? `cart-item-${index}`}
             className="flex flex-col sm:flex-row gap-3 border rounded-lg p-3 shadow-sm hover:shadow-md transition-all bg-card"

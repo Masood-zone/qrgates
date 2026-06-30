@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, MapPin, Share2, User, Users } from "lucide-react";
 import { EventCountdown } from "@/components/events/event-countdown";
 import { formatDate, formatTime } from "@/lib/date-utils";
+import { isPastDate } from "@/lib/cart-utils";
 import { ImageGallery } from "@/components/events/image-gallery";
 import { BuyNowButton } from "@/components/events/buy-now-button";
 import { useCartStore } from "@/lib/store/cart-store";
@@ -93,6 +94,7 @@ export function EventDetails({ event }: EventDetailsProps) {
   } else if (now > end) {
     eventStatus = "ended";
   }
+  const isPastEvent = isPastDate(event.endDate);
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="grid md:grid-cols-3 gap-8">
@@ -206,6 +208,7 @@ export function EventDetails({ event }: EventDetailsProps) {
                       eventTitle: event.title,
                       eventImage: event.mainImage || undefined,
                       eventDate: event.startDate.toString(),
+                      eventEndDate: event.endDate.toString(),
                       eventLocation: event.location,
                       ticketType: ticketType.name,
                       ticketTypeId: ticketType.id,
@@ -222,15 +225,19 @@ export function EventDetails({ event }: EventDetailsProps) {
                       } for ${event.title}`,
                     });
                   }}
-                  disabled={availableTickets <= 0 || isInCart}
+                  disabled={availableTickets <= 0 || isInCart || isPastEvent}
                 >
-                  {isInCart ? "Already in Cart" : "Add to Cart"}
+                  {isPastEvent
+                    ? "Event Ended"
+                    : isInCart
+                      ? "Already in Cart"
+                      : "Add to Cart"}
                 </Button>
                 <BuyNowButton
                   event={event}
                   ticketType={ticketType}
                   quantity={quantity}
-                  disabled={availableTickets <= 0}
+                  disabled={availableTickets <= 0 || isPastEvent}
                 />
                 <Button
                   variant="outline"

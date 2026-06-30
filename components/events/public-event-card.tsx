@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TicketTypeSelector } from "@/components/ui/ticket-type-selector";
 import { formatDate } from "@/lib/date-utils";
+import { getEventCategoryLabel } from "@/lib/event-categories";
+import { isPastDate } from "@/lib/cart-utils";
 import { useCartStore } from "@/lib/store/cart-store";
 import type { Event, TicketType } from "@/lib/types/api";
 
@@ -65,6 +67,8 @@ export function PublicEventCard({
       item.eventId === event.id && item.ticketTypeId === selectedTicketType?.id
   );
   const startDate = new Date(event.startDate);
+  const isPastEvent = isPastDate(event.endDate);
+  const categoryLabel = getEventCategoryLabel(event.category);
 
   const handleTicketSelect = (typeId: string, qty: number) => {
     setSelectedTicketTypeId(typeId);
@@ -72,7 +76,7 @@ export function PublicEventCard({
   };
 
   const handleAddToCart = () => {
-    if (!selectedTicketType || availableTickets <= 0) return;
+    if (!selectedTicketType || availableTickets <= 0 || isPastEvent) return;
 
     addItem({
       id: `${event.id}-${selectedTicketType.id}-${Date.now()}`,
@@ -80,6 +84,7 @@ export function PublicEventCard({
       eventTitle: event.title,
       eventImage: event.mainImage || undefined,
       eventDate: event.startDate.toString(),
+      eventEndDate: event.endDate.toString(),
       eventLocation: event.location,
       ticketType: selectedTicketType.name,
       ticketTypeId: selectedTicketType.id,
@@ -120,7 +125,7 @@ export function PublicEventCard({
           </p>
         </div>
         <Badge className="absolute right-4 top-4 rounded-full bg-primary px-3 py-1 text-white">
-          {event.status === "ONGOING" ? "Live now" : event.category}
+          {event.status === "ONGOING" ? "Live now" : categoryLabel}
         </Badge>
       </Link>
 
@@ -128,7 +133,7 @@ export function PublicEventCard({
         <div className="mb-3 flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-primary">
-              {event.category}
+              {categoryLabel}
             </p>
             <Link href={`/events/${event.id}`}>
               <h3 className="mt-1 line-clamp-2 text-xl font-bold leading-tight text-foreground hover:text-primary">
@@ -183,10 +188,10 @@ export function PublicEventCard({
             <Button
               className="flex-1"
               onClick={handleAddToCart}
-              disabled={availableTickets <= 0 || isInCart}
+              disabled={availableTickets <= 0 || isInCart || isPastEvent}
             >
               <ShoppingCart className="mr-2 h-4 w-4" />
-              {isInCart ? "In Cart" : "Book"}
+              {isPastEvent ? "Event Ended" : isInCart ? "In Cart" : "Book"}
             </Button>
           )}
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -40,7 +40,8 @@ const steps: CheckoutStep[] = [
 export function CheckoutPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { getActiveItems, getTotalPrice, clearCart, pruneExpiredItems } =
+    useCartStore();
   const [currentStep, setCurrentStep] = useState(1);
   const [userInfo, setUserInfo] = useState({
     name: session?.user?.name || "",
@@ -51,7 +52,12 @@ export function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const totalPrice = getTotalPrice();
+  const items = getActiveItems();
   const progress = (currentStep / steps.length) * 100;
+
+  useEffect(() => {
+    pruneExpiredItems();
+  }, [pruneExpiredItems]);
 
   const handleNext = () => {
     if (currentStep < steps.length) {
