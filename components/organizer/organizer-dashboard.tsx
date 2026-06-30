@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useEvents } from "@/lib/api/events";
-import { useOrders } from "@/lib/api/orders";
+import { useOrganizerOrders } from "@/lib/api/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Users, Ticket, BadgeCent } from "lucide-react";
 
@@ -15,23 +15,26 @@ export function OrganizerDashboard() {
     limit: 100,
   });
 
-  // Get organizer's orders
-  const { data: ordersData } = useOrders({
-    userId: session?.user?.id,
-    limit: 100,
+  // Get completed customer orders for the organizer's events.
+  const { data: ordersData } = useOrganizerOrders({
+    organizerId: session?.user?.id,
+    status: "COMPLETED",
+    limit: 1000,
   });
 
   const events = eventsData?.data || [];
   const orders = ordersData?.orders || [];
+  const ticketsSoldByEvent = orders.reduce<Record<string, number>>((acc, order) => {
+    acc[order.event.id] = (acc[order.event.id] || 0) + order.tickets.length;
+    return acc;
+  }, {});
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const totalTicketsSold = orders.reduce(
     (sum, order) => sum + order.tickets.length,
     0
   );
-  const totalAttendees = orders.filter(
-    (order) => order.status === "COMPLETED"
-  ).length;
+  const totalAttendees = totalTicketsSold;
 
   const stats = [
     {
@@ -110,7 +113,7 @@ export function OrganizerDashboard() {
                   <div className="text-right">
                     <p className="font-medium">Ghc{event.price}</p>
                     <p className="text-sm ">
-                      {event.soldTickets}/{event.totalTickets} sold
+                      {(ticketsSoldByEvent[event.id] ?? event.soldTickets)}/{event.totalTickets} sold
                     </p>
                   </div>
                 </div>
@@ -133,22 +136,13 @@ export function OrganizerDashboard() {
                   <div>
                     <p className="font-medium">{order.event.title}</p>
                     <p className="text-sm ">
+                      {order.user?.name || order.user?.email || "Customer"} -{" "}
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-medium">Ghc{order.total}</p>
-                    <p
-                      className={`text-sm ${
-                        order.status === "COMPLETED"
-                          ? "text-primary"
-                          : order.status === "PENDING"
-                          ? "text-yellow-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {order.status}
-                    </p>
+                    <p className="text-sm text-primary">{order.tickets.length} ticket(s)</p>
                   </div>
                 </div>
               ))}

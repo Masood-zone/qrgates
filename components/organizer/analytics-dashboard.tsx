@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useEvents } from "@/lib/api/events";
-import { useOrders } from "@/lib/api/orders";
+import { useOrganizerOrders } from "@/lib/api/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -46,13 +46,18 @@ export function AnalyticsDashboard() {
     limit: 100,
   });
 
-  const { data: ordersData } = useOrders({
-    userId: session?.user?.id,
+  const { data: ordersData } = useOrganizerOrders({
+    organizerId: session?.user?.id,
+    status: "COMPLETED",
     limit: 1000,
   });
 
   const events = eventsData?.data || [];
-  const orders = ordersData?.data || [];
+  const orders = ordersData?.orders || [];
+  const ticketsSoldByEvent = orders.reduce<Record<string, number>>((acc, order) => {
+    acc[order.event.id] = (acc[order.event.id] || 0) + order.tickets.length;
+    return acc;
+  }, {});
 
   // Calculate metrics
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
@@ -60,9 +65,7 @@ export function AnalyticsDashboard() {
     (sum, order) => sum + order.tickets.length,
     0
   );
-  const totalAttendees = orders.filter(
-    (order) => order.status === "COMPLETED"
-  ).length;
+  const totalAttendees = totalTicketsSold;
   const averageTicketPrice =
     totalTicketsSold > 0 ? totalRevenue / totalTicketsSold : 0;
 
@@ -82,7 +85,7 @@ export function AnalyticsDashboard() {
   // Event performance data
   const eventPerformanceData = events.map((event) => ({
     name: event.title.substring(0, 20) + (event.title.length > 20 ? "..." : ""),
-    sold: event.soldTickets,
+    sold: ticketsSoldByEvent[event.id] || 0,
     total: event.totalTickets,
     revenue: orders
       .filter((order) => order.event.id === event.id)
@@ -339,7 +342,7 @@ export function AnalyticsDashboard() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className="font-medium">${order.total}</div>
+                        <div className="font-medium">Ghc{order.total}</div>
                         <Badge
                           variant={
                             order.status === "COMPLETED"

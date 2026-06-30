@@ -13,14 +13,17 @@ import type {
   PaginatedResponse,
 } from "@/lib/types/api";
 
+type OrderFilters = {
+  userId?: string;
+  organizerId?: string;
+  status?: string;
+  page?: number;
+  limit?: number;
+};
+
 // API functions
 export const ordersApi = {
-  getOrders: async (params?: {
-    userId?: string;
-    status?: string;
-    page?: number;
-    limit?: number;
-  }): Promise<PaginatedResponse<Order>> => {
+  getOrders: async (params?: OrderFilters): Promise<PaginatedResponse<Order>> => {
     const searchParams = new URLSearchParams();
 
     if (params) {
@@ -61,12 +64,7 @@ export const ordersApi = {
 export const orderKeys = {
   all: ["orders"] as const,
   lists: () => [...orderKeys.all, "list"] as const,
-  list: (filters: {
-    userId?: string;
-    status?: string;
-    page?: number;
-    limit?: number;
-  }) => [...orderKeys.lists(), filters] as const,
+  list: (filters: OrderFilters) => [...orderKeys.lists(), filters] as const,
   details: () => [...orderKeys.all, "detail"] as const,
   detail: (id: string) => [...orderKeys.details(), id] as const,
   userOrders: (userId: string) => [...orderKeys.all, "user", userId] as const,
@@ -74,7 +72,7 @@ export const orderKeys = {
 
 // Query hooks
 export const useOrders = (
-  params?: { userId?: string; status?: string; page?: number; limit?: number },
+  params?: OrderFilters,
   options?: Omit<
     UseQueryOptions<PaginatedResponse<Order>>,
     "queryKey" | "queryFn"
@@ -83,6 +81,21 @@ export const useOrders = (
   return useQuery({
     queryKey: orderKeys.list(params || {}),
     queryFn: () => ordersApi.getOrders(params),
+    ...options,
+  });
+};
+
+export const useOrganizerOrders = (
+  params?: OrderFilters,
+  options?: Omit<
+    UseQueryOptions<PaginatedResponse<Order>>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  return useQuery({
+    queryKey: orderKeys.list(params || {}),
+    queryFn: () => ordersApi.getOrders(params),
+    enabled: !!params?.organizerId,
     ...options,
   });
 };

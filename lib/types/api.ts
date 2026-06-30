@@ -143,6 +143,11 @@ export interface Order {
     mainImage: string | null;
   };
   tickets: Ticket[];
+  user?: {
+    id: string;
+    name: string | null;
+    email: string;
+  };
 }
 
 export interface SecurityOfficer {

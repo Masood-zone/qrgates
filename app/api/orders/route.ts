@@ -15,15 +15,50 @@ export async function GET(request: NextRequest) {
     const limit = Number.parseInt(searchParams.get("limit") || "10");
     const page = Number.parseInt(searchParams.get("page") || "1");
     const status = searchParams.get("status");
+    const requestedUserId = searchParams.get("userId");
+    const organizerId = searchParams.get("organizerId");
 
-    const where = {
-      userId: session.user.id,
-      ...(status && { status: status as any }),
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, role: true },
+    });
+
+    if (!currentUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const where: any = {
+      ...(status && { status }),
     };
+
+    if (organizerId) {
+      if (currentUser.role !== "ADMIN" && organizerId !== currentUser.id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+
+      where.event = { organizerId };
+    } else {
+      if (
+        requestedUserId &&
+        requestedUserId !== currentUser.id &&
+        currentUser.role !== "ADMIN"
+      ) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+
+      where.userId = requestedUserId || currentUser.id;
+    }
 
     const orders = await prisma.order.findMany({
       where,
       include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
         event: {
           select: {
             id: true,
