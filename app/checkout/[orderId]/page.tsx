@@ -12,7 +12,7 @@ export async function generateMetadata({
 }) {
   await params;
   return {
-    title: "Checkout | QRGate",
+    title: "Checkout | QuickGates",
   };
 }
 

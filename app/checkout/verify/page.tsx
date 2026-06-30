@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { verifyPayment } from "@/lib/paystack";
-import { generateQRCode } from "@/lib/qr-code";
+import { completePaidOrder } from "@/lib/payments/complete-order";
 
 export default async function VerifyPaymentPage({
   searchParams,
@@ -38,87 +38,15 @@ export default async function VerifyPaymentPage({
       // Find order by reference
       const order = await prisma.order.findFirst({
         where: { reference },
-        include: {
-          event: true,
-          tickets: true, // Include existing tickets
-        },
+        select: { id: true },
       });
 
       if (order) {
-        // Update order status to COMPLETED
-        await prisma.order.update({
-          where: { id: order.id },
-          data: {
-            status: "COMPLETED",
-            paymentId: paymentData.id?.toString(),
-          },
+        await completePaidOrder({
+          orderId: order.id,
+          paymentId: paymentData.id?.toString(),
+          reference,
         });
-
-        // Check if tickets already exist for this order
-        if (order.tickets.length === 0) {
-          // Create tickets for the order (single ticket type per order)
-          const ticketType = order.tickets[0]?.type || "Standard";
-          const quantity = order.tickets.length || 1;
-
-          // Get the price for this ticket type
-          let ticketPrice = order.event.price; // Default price
-
-          // Find ticket type price if available
-          const ticketTypeInfo = await prisma.ticketType.findFirst({
-            where: {
-              eventId: order.eventId,
-              name: ticketType,
-            },
-          });
-
-          if (ticketTypeInfo) {
-            ticketPrice = ticketTypeInfo.price;
-          }
-
-          // Create tickets
-          for (let i = 0; i < quantity; i++) {
-            const qrCode = await generateQRCode({
-              eventId: order.eventId,
-              userId: order.userId,
-              orderId: order.id,
-              ticketNumber: order.event.soldTickets + i + 1,
-              timestamp: Date.now(),
-            });
-
-            await prisma.ticket.create({
-              data: {
-                eventId: order.eventId,
-                userId: order.userId,
-                orderId: order.id,
-                type: ticketType,
-                price: ticketPrice,
-                qrCode,
-              },
-            });
-          }
-
-          // Update event sold tickets count
-          await prisma.event.update({
-            where: { id: order.eventId },
-            data: {
-              soldTickets: {
-                increment: quantity,
-              },
-            },
-          });
-
-          // Update ticket type sold count if applicable
-          if (ticketTypeInfo) {
-            await prisma.ticketType.update({
-              where: { id: ticketTypeInfo.id },
-              data: {
-                soldCount: {
-                  increment: quantity,
-                },
-              },
-            });
-          }
-        }
 
         paymentStatus = "success";
         orderId = order.id;
