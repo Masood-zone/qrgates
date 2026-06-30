@@ -25,9 +25,10 @@ export function OrderHistoryPage() {
   );
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("COMPLETED");
+  const completedOrders = orders.filter((order) => order.status === "COMPLETED");
 
-  const filteredOrders = orders.filter((order) => {
+  const filteredOrders = completedOrders.filter((order) => {
     const matchesSearch = order.event.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -36,8 +37,7 @@ export function OrderHistoryPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const totalSpent = orders
-    .filter((order) => order.status === "COMPLETED")
+  const totalSpent = completedOrders
     .reduce((sum, order) => sum + order.total, 0);
 
   if (isLoading) {
@@ -72,7 +72,7 @@ export function OrderHistoryPage() {
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{orders.length}</div>
+            <div className="text-2xl font-bold">{completedOrders.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -86,12 +86,12 @@ export function OrderHistoryPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Completed Orders
-            </CardTitle>
+            Completed Orders
+          </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {orders.filter((order) => order.status === "COMPLETED").length}
+              {completedOrders.length}
             </div>
           </CardContent>
         </Card>
@@ -113,11 +113,8 @@ export function OrderHistoryPage() {
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Orders</SelectItem>
-            <SelectItem value="PENDING">Pending</SelectItem>
+            <SelectItem value="all">All Completed Orders</SelectItem>
             <SelectItem value="COMPLETED">Completed</SelectItem>
-            <SelectItem value="CANCELLED">Cancelled</SelectItem>
-            <SelectItem value="REFUNDED">Refunded</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -160,8 +157,6 @@ function OrderCard({ order }: OrderCardProps) {
     switch (status) {
       case "COMPLETED":
         return "default";
-      case "PENDING":
-        return "secondary";
       case "CANCELLED":
         return "destructive";
       case "REFUNDED":

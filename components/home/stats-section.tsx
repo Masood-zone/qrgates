@@ -1,30 +1,29 @@
-import { Building2, Church, GraduationCap, HandHeart, Music2 } from "lucide-react";
+import { GraduationCap, Music2, Presentation } from "lucide-react";
 
 const audienceCards = [
   {
-    title: "Institutions",
-    description: "Convocations, graduations, and student events",
+    title: "Conference",
+    description: "Campus talks, summits, and professional sessions",
     image: "/hero-bg-1.jpg",
     className: "md:col-span-2",
   },
   {
-    title: "Corporate",
-    description: "Summits, expos, and networking sessions",
+    title: "Concerts",
+    description: "Live performances, showcases, and music nights",
     image: "/booking.jpg",
     className: "md:col-span-4",
   },
   {
-    title: "Entertainment",
-    description: "Concerts, festivals, and nightlife",
+    title: "Concert-Party",
+    description: "High-energy campus parties and headline events",
     image: "/hero-bg-2.jpg",
     className: "md:col-span-3",
   },
 ];
 
 const compactCards = [
-  { title: "Churches", icon: Church },
-  { title: "NGOs", icon: HandHeart },
-  { title: "Govt", icon: Building2 },
+  { title: "Club Jams", icon: Music2 },
+  { title: "Workshop", icon: Presentation },
 ];
 
 export function StatsSection() {
@@ -37,13 +36,13 @@ export function StatsSection() {
               Built for Every Type of Organization
             </h2>
             <p className="mt-3 text-sm leading-6 text-slate-300">
-              Whether you host campus programs, corporate sessions, or live
-              entertainment, QuickGates keeps ticketing organized.
+              Whether you host conferences, concerts, parties, club jams, or
+              workshops, QuickGates keeps ticketing organized.
             </p>
           </div>
           <div className="flex items-center gap-2 text-sm font-bold text-rose-200">
             <GraduationCap className="h-4 w-4" />
-            University of Cape Coast ready
+            Kumasi with USTED ready
           </div>
         </div>
 
@@ -74,10 +73,6 @@ export function StatsSection() {
               <h3 className="font-extrabold">{card.title}</h3>
             </div>
           ))}
-          <div className="hidden min-h-56 flex-col items-center justify-center rounded-xl border border-white/10 bg-primary/20 p-5 text-center md:flex">
-            <Music2 className="mb-4 h-9 w-9 text-rose-200" />
-            <h3 className="font-extrabold">More</h3>
-          </div>
         </div>
       </div>
     </section>
