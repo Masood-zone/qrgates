@@ -1,4 +1,5 @@
 import { transporter } from "./nodemailer";
+import { getMailFrom } from "@/lib/email/mailer";
 
 type TicketEmailItem = {
   qrCode: string;
@@ -48,7 +49,7 @@ export async function sendTicketEmail({
   const sameDay = formattedStart === formattedEnd;
 
   const mailOptions = {
-    from: `"QRGate" <${process.env.EMAIL_USER}>`,
+    from: getMailFrom(),
     to: user.email,
     subject: `Your Tickets for ${event.title}`,
     html: `
@@ -75,7 +76,7 @@ export async function sendTicketEmail({
             <p style="margin-top: 30px; color: hsl(var(--muted-foreground,240 3.8% 46.1%)); font-size: 0.98rem;">Please keep this email safe and present the QR code(s) at the entrance.</p>
           </div>
           <div style="background: hsl(var(--primary,346.8 77.2% 49.8%)); color: hsl(var(--primary-foreground,355.7 100% 97.3%)); text-align: center; padding: 12px 0; font-size: 0.95rem;">
-            <p style="margin: 0;">&copy; ${new Date().getFullYear()} QRGATE</p>
+            <p style="margin: 0;">&copy; ${new Date().getFullYear()} QuickGates</p>
           </div>
         </div>
       </div>

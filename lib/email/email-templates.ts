@@ -1,4 +1,4 @@
-// General HTML email template for QRGATE
+// General HTML email template for QuickGates
 export function QrGateEmailTemplate({
   title,
   body,
@@ -16,14 +16,14 @@ export function QrGateEmailTemplate({
     <div style="background:hsl(0,0%,100%);padding:32px 0;font-family:Inter,Arial,Helvetica,sans-serif;min-height:100vh;">
       <div style="max-width:480px;margin:0 auto;background:hsl(0,0%,100%);border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.04);overflow:hidden;">
         <div style="padding:32px 32px 16px 32px;text-align:center;">
-          <img src='${logoUrl}' alt="QRGATE Logo" style="width:64px;height:64px;border-radius:50%;margin-bottom:16px;object-fit:cover;background:#f1f5f9;display:inline-block;" onerror="this.onerror=null;this.src='https://res.cloudinary.com/farzel-photos/image/upload/v1751317948/muzica_ry4x7o.png'" />
+          <img src='${logoUrl}' alt="QuickGates Logo" style="width:64px;height:64px;border-radius:50%;margin-bottom:16px;object-fit:cover;background:#f1f5f9;display:inline-block;" onerror="this.onerror=null;this.src='https://res.cloudinary.com/farzel-photos/image/upload/v1751317948/muzica_ry4x7o.png'" />
           <h1 style="font-size:1.5rem;font-weight:700;color:hsl(240,10%,3.9%);margin-bottom:8px;">${title}</h1>
         </div>
         <div style="padding:0 32px 32px 32px;font-size:1rem;color:hsl(240,10%,3.9%);">
           ${body}
         </div>
         <div style="background:hsl(240,4.8%,95.9%);padding:16px 32px;text-align:center;font-size:0.9rem;color:hsl(240,3.8%,46.1%);">
-          &copy; ${new Date().getFullYear()} QRGATE. All rights reserved.
+          &copy; ${new Date().getFullYear()} QuickGates. All rights reserved.
         </div>
       </div>
     </div>
@@ -33,12 +33,12 @@ export function QrGateEmailTemplate({
 // 1. Registration Confirmation Email
 export function registrationConfirmationEmail({ name }: { name: string }) {
   return QrGateEmailTemplate({
-    title: "Welcome to QRGATE!",
+    title: "Welcome to QuickGates!",
     body: `
       <p style=\"margin-bottom:24px;\">Hi <strong>${name}</strong>,</p>
-      <p style=\"margin-bottom:24px;\">Your account has been successfully created. You can now browse and purchase tickets for upcoming events, manage your profile, and enjoy seamless event access with QRGATE.</p>
+      <p style=\"margin-bottom:24px;\">Your account has been successfully created. You can now browse and purchase tickets for upcoming events, manage your profile, and enjoy seamless event access with QuickGates.</p>
       <p style=\"margin-bottom:24px;\">If you have any questions or need help, just reply to this email or visit our Help Center.</p>
-      <p style=\"color:hsl(240,3.8%,46.1%);font-size:0.95rem;\">Thank you for joining QRGATE!</p>
+      <p style=\"color:hsl(240,3.8%,46.1%);font-size:0.95rem;\">Thank you for joining QuickGates!</p>
     `,
   });
 }
@@ -55,19 +55,19 @@ export function organizerOnboardingEmail({
   loginUrl: string;
 }) {
   return QrGateEmailTemplate({
-    title: "Your QRGATE Organizer Account Is Ready",
+    title: "Your QuickGates Organizer Account Is Ready",
     body: `
       <p style="margin-bottom:24px;">Hi <strong>${name}</strong>,</p>
-      <p style="margin-bottom:24px;">An administrator has created your organizer account on QRGATE. You can now sign in, create events, manage ticket types, and monitor attendees from your organizer dashboard.</p>
+      <p style="margin-bottom:24px;">An administrator has created your organizer account on QuickGates. You can now sign in, create events, manage ticket types, and monitor attendees from your organizer dashboard.</p>
       <div style="background:#f8f9fb;border:1px solid #e1e2e4;border-radius:10px;padding:18px;margin-bottom:24px;">
         <p style="margin:0 0 8px 0;"><strong>Email:</strong> ${email}</p>
         <p style="margin:0;"><strong>Temporary password:</strong> ${password}</p>
       </div>
       <p style="text-align:center;margin-bottom:24px;">
-        <a href="${loginUrl}" style="display:inline-block;padding:12px 28px;background:#ba0033;color:#ffffff;font-weight:700;border-radius:8px;text-decoration:none;font-size:1rem;">Sign in to QRGATE</a>
+        <a href="${loginUrl}" style="display:inline-block;padding:12px 28px;background:#ba0033;color:#ffffff;font-weight:700;border-radius:8px;text-decoration:none;font-size:1rem;">Sign in to QuickGates</a>
       </p>
       <p style="margin-bottom:24px;">For security, please change this password from your account settings after your first login.</p>
-      <p style="color:#5b6278;font-size:0.95rem;">Thank you for organizing with QRGATE.</p>
+      <p style="color:#5b6278;font-size:0.95rem;">Thank you for organizing with QuickGates.</p>
     `,
   });
 }
@@ -165,7 +165,74 @@ export function ticketScanNotificationEmail({
         <li><strong>Entry Window:</strong> ${eventWindowStart} – ${eventWindowEnd}</li>
       </ul>
       <p style=\"margin-bottom:24px;\">If this was not you, please contact event staff or support immediately.</p>
-      <p style=\"color:hsl(240,3.8%,46.1%);font-size:0.95rem;\">Thank you for using QRGATE.</p>
+      <p style=\"color:hsl(240,3.8%,46.1%);font-size:0.95rem;\">Thank you for using QuickGates.</p>
+    `,
+  });
+}
+
+export function accountSuspendedEmail({
+  name,
+  role,
+}: {
+  name: string;
+  role: "user" | "organizer";
+}) {
+  return QrGateEmailTemplate({
+    title: "Your QuickGates Account Has Been Suspended",
+    body: `
+      <p style="margin-bottom:24px;">Hi <strong>${name}</strong>,</p>
+      <p style="margin-bottom:24px;">Your QuickGates ${role} account has been suspended by an administrator. You will not be able to access protected areas until your account is reactivated.</p>
+      <p style="margin-bottom:24px;">If you believe this was a mistake, please contact QuickGates support.</p>
+      <p style="color:#5b6278;font-size:0.95rem;">QuickGates Support</p>
+    `,
+  });
+}
+
+export function organizerOrderMilestoneEmail({
+  name,
+  eventTitle,
+  completedOrders,
+}: {
+  name: string;
+  eventTitle: string;
+  completedOrders: number;
+}) {
+  return QrGateEmailTemplate({
+    title: `${completedOrders} Orders Reached`,
+    body: `
+      <p style="margin-bottom:24px;">Hi <strong>${name}</strong>,</p>
+      <p style="margin-bottom:24px;">Great news: <strong>${eventTitle}</strong> has reached <strong>${completedOrders}</strong> completed orders on QuickGates.</p>
+      <p style="margin-bottom:24px;">You can review sales and attendee activity from your organizer dashboard.</p>
+      <p style="color:#5b6278;font-size:0.95rem;">Keep the momentum going.</p>
+    `,
+  });
+}
+
+export function newEventAnnouncementEmail({
+  eventTitle,
+  eventDate,
+  eventLocation,
+  eventUrl,
+  organizerName,
+}: {
+  eventTitle: string;
+  eventDate: string;
+  eventLocation: string;
+  eventUrl: string;
+  organizerName: string;
+}) {
+  return QrGateEmailTemplate({
+    title: "New Event on QuickGates",
+    body: `
+      <p style="margin-bottom:24px;">A new event from <strong>${organizerName}</strong> is now available on QuickGates.</p>
+      <ul style="margin-bottom:24px;padding-left:20px;">
+        <li><strong>Event:</strong> ${eventTitle}</li>
+        <li><strong>Date:</strong> ${eventDate}</li>
+        <li><strong>Location:</strong> ${eventLocation}</li>
+      </ul>
+      <p style="text-align:center;margin-bottom:24px;">
+        <a href="${eventUrl}" style="display:inline-block;padding:12px 28px;background:#ba0033;color:#ffffff;font-weight:700;border-radius:8px;text-decoration:none;font-size:1rem;">View Event</a>
+      </p>
     `,
   });
 }
