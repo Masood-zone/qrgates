@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// This endpoint will be called by a cron job to update event statuses
+export const dynamic = "force-dynamic";
+
+// This endpoint is called by Vercel Cron to update event statuses.
 export async function GET(request: Request) {
   try {
-    // Check for authorization header
     const authHeader = request.headers.get("authorization");
-    if (!authHeader || authHeader !== `Bearer ${process.env.CRON_SECRET_KEY}`) {
+    if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
