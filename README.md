@@ -1,4 +1,4 @@
-# QRGates
+# QuickGates
 
 A modern event ticketing platform with QR code generation, event discovery, admin dashboard, and security officer portal. Built with Next.js 15, React 19, Prisma 7 (PostgreSQL), TailwindCSS, and Shadcn/UI.
 
@@ -7,7 +7,7 @@ A modern event ticketing platform with QR code generation, event discovery, admi
 ## Folder Structure
 
 ```
-QRGates/
+QuickGates/
 │
 ├── app/
 │   ├── (admin)/admin/          # Admin dashboard pages
@@ -40,7 +40,7 @@ QRGates/
 │   ├── dashboard/              # User dashboard components
 │   ├── security/               # Security scanning components
 │   ├── checkout/               # Checkout and payment components
-│   ├── layout/                 # Navbar, footer
+│   ├── layout/                 # Navbar, footer, navigation progress
 │   └── ui/                     # Shared Shadcn/UI primitives
 │
 ├── lib/
@@ -48,13 +48,16 @@ QRGates/
 │   ├── store/                  # Zustand stores (cart)
 │   ├── services/               # HTTP fetch wrappers
 │   ├── types/                  # TypeScript type definitions
-│   ├── email/                  # Nodemailer templates
+│   ├── email/                  # Nodemailer templates and notification dispatchers
+│   ├── payments/               # Payment processing utilities
 │   ├── auth.ts                 # NextAuth configuration
 │   ├── prisma.ts               # Prisma client (PrismaPg adapter)
 │   ├── admin-auth.ts           # Admin role guard middleware
 │   ├── paystack.ts             # Paystack payment integration
 │   ├── qr-code.ts              # QR code generation
 │   ├── date-utils.ts           # Date formatting helpers
+│   ├── event-categories.ts     # Event category definitions and normalization
+│   ├── cart-utils.ts           # Cart item expiration utilities
 │   └── cloudinary.ts           # Image uploads
 │
 ├── prisma/
@@ -76,13 +79,17 @@ QRGates/
 ## Key Features
 
 - **Event Discovery** -- Public listing with category filtering, search, and status badges
+- **Centralized Event Categories** -- Unified category definitions with normalization and legacy value mapping
 - **QR Code Tickets** -- Generation on purchase, scanning for entry verification
-- **Admin Dashboard** -- User management, event oversight, organizer control, analytics, security officer management
-- **User Suspension** -- Admins can suspend users; suspended accounts are blocked at login
-- **Organizer Portal** -- Event CRUD, attendee management, ticket sales tracking
+- **Admin Dashboard** -- User management, event oversight with image gallery uploads, organizer control, analytics, security officer management
+- **User Suspension** -- Admins can suspend users; suspended accounts are blocked at login with email notifications
+- **Organizer Portal** -- Event CRUD, attendee management, ticket sales tracking, order milestone notifications
 - **Security Officer Portal** -- QR-based ticket verification per event
 - **Automated Cron** -- Vercel cron updates event statuses (UPCOMING -> ONGOING -> COMPLETED)
 - **Checkout Flow** -- Paystack-powered payment with order and ticket creation
+- **Cart Expiration Handling** -- Automatic pruning of expired cart items and blocking past event purchases
+- **Navigation Progress** -- Visual progress indicator during page transitions
+- **Email Notifications** -- Branded emails for registration, tickets, account suspension, and event announcements
 - **Newsletter** -- Email subscription endpoint
 - **Responsive UI** -- TailwindCSS with refined light/dark theme tokens
 
@@ -95,9 +102,10 @@ QRGates/
 | Framework | Next.js 15 (App Router) |
 | Database | PostgreSQL via Prisma 7 + PrismaPg adapter |
 | Auth | NextAuth.js |
-| Payments | Paystack |
+| Payments | Paystack (Ghana Cedis) |
 | Styling | TailwindCSS + Shadcn/UI |
 | State | Zustand (cart), React Query (server data) |
+| Email | Nodemailer |
 | Hosting | Vercel |
 
 ---
@@ -148,6 +156,9 @@ Seeds an admin user, an organizer user, six demo events (various statuses), and 
 | `NEXTAUTH_URL` | App base URL |
 | `CRON_SECRET` | Bearer token for Vercel cron endpoint |
 | `PAYSTACK_SECRET_KEY` | Paystack payment integration |
+| `PAYSTACK_BASE_URL` | Paystack API base URL (defaults to https://api.paystack.co) |
+| `EMAIL_FROM` / `EMAIL_USER` | Sender email address for notifications |
+| `EMAIL_HOST` / `EMAIL_PORT` | SMTP server configuration |
 | `CLOUDINARY_*` | Image upload configuration |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Seed admin credentials |
 | `SEED_ORGANIZER_EMAIL` / `SEED_ORGANIZER_PASSWORD` | Seed organizer credentials |
