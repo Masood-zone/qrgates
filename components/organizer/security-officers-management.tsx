@@ -39,6 +39,7 @@ import {
   UserX,
   UserCheck,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 
 interface SecurityOfficer {
@@ -65,6 +66,7 @@ export function SecurityOfficersManagement({
 }: SecurityOfficersManagementProps) {
   const [officers, setOfficers] = useState<SecurityOfficer[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingOfficer, setIsCreatingOfficer] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newOfficer, setNewOfficer] = useState({
     name: "",
@@ -104,6 +106,7 @@ export function SecurityOfficersManagement({
       return;
     }
 
+    setIsCreatingOfficer(true);
     try {
       const response = await fetch(`/api/events/${eventId}/security-officers`, {
         method: "POST",
@@ -138,6 +141,8 @@ export function SecurityOfficersManagement({
         description: "Failed to create security officer.",
         variant: "destructive",
       });
+    } finally {
+      setIsCreatingOfficer(false);
     }
   };
 
@@ -304,11 +309,15 @@ export function SecurityOfficersManagement({
                     <Button
                       variant="outline"
                       onClick={() => setIsCreateDialogOpen(false)}
+                      disabled={isCreatingOfficer}
                     >
                       Cancel
                     </Button>
-                    <Button onClick={handleCreateOfficer}>
-                      Create Officer
+                    <Button onClick={handleCreateOfficer} disabled={isCreatingOfficer}>
+                      {isCreatingOfficer && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      {isCreatingOfficer ? "Creating..." : "Create Officer"}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
