@@ -89,7 +89,7 @@ export function LoadingPage({
       {/* Bottom Text */}
       <div className="absolute bottom-8 text-center">
         <p className="text-sm text-muted-foreground">
-          QRGate - Your Ticket Booking Solution
+          QuickGates - Your Ticket Booking Solution
         </p>
       </div>
     </div>

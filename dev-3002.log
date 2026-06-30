@@ -1,0 +1,69 @@
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:3002
+   - Network:      http://192.168.204.70:3002
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 4.4s
+ ○ Compiling / ...
+ ✓ Compiled /events in 14.6s (1571 modules)
+(node:17252) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ GET / 200 in 14128ms
+ GET /about 200 in 14135ms
+ GET /events 200 in 14123ms
+ GET / 200 in 16474ms
+ ○ Compiling /api/events ...
+ GET /api/cron 200 in 17007ms
+ ✓ Compiled /api/events in 2.6s (1828 modules)
+ GET /api/auth/session 200 in 5320ms
+ GET /api/events?dateFilter=active-upcoming&limit=6 200 in 4935ms
+ ○ Compiling /api/users/me ...
+ ✓ Compiled /api/users/me in 1019ms (1830 modules)
+ GET /api/users/me 200 in 1589ms
+ ✓ Compiled in 1044ms (1844 modules)
+ GET / 200 in 175ms
+ GET /api/cron 401 in 17ms
+ GET /api/cron 200 in 2694ms
+ GET /api/events?dateFilter=active-upcoming&limit=20 200 in 2569ms
+ ✓ Compiled in 700ms (664 modules)
+ GET / 200 in 146ms
+ ✓ Compiled in 565ms (664 modules)
+ ✓ Compiled in 646ms (664 modules)
+ GET / 200 in 659ms
+ GET / 200 in 181ms
+ ✓ Compiled in 1126ms (664 modules)
+ ✓ Compiled in 1049ms (664 modules)
+ GET / 200 in 530ms
+ GET / 200 in 132ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1254ms (1498 modules)
+ GET /_next/static/css/app/layout.css?v=1782780207222 404 in 2127ms
+ ✓ Compiled in 559ms (664 modules)
+ GET / 200 in 261ms
+ GET /_next/static/css/app/layout.css?v=1782780212218 404 in 253ms
+ ✓ Compiled in 714ms (664 modules)
+ ✓ Compiled in 920ms (664 modules)
+ GET / 200 in 1129ms
+ ✓ Compiled in 1301ms (664 modules)
+ GET / 200 in 1481ms
+ GET / 200 in 164ms
+ GET /_next/static/css/app/layout.css?v=1782780217440 404 in 385ms
+ ✓ Compiled in 951ms (664 modules)
+ GET / 200 in 171ms
+ GET /_next/static/css/app/layout.css?v=1782780234680 404 in 312ms
+ ✓ Compiled in 738ms (664 modules)
+ ✓ Compiled in 635ms (664 modules)
+ GET / 200 in 963ms
+ ✓ Compiled in 423ms (664 modules)
+ GET / 200 in 312ms
+ GET / 200 in 94ms
+ GET /_next/static/css/app/layout.css?v=1782780237327 404 in 204ms
+[?25h
