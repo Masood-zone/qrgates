@@ -63,14 +63,14 @@ export const eventsApi = {
 
   getFeaturedEvents: async (): Promise<Event[]> => {
     const response = await apiGet<PaginatedResponse<Event>>(
-      "/events?dateFilter=upcoming&limit=6"
+      "/events?dateFilter=active-upcoming&limit=6"
     );
     return response.events;
   },
 
   getUpcomingEvents: async (): Promise<Event[]> => {
     const response = await apiGet<PaginatedResponse<Event>>(
-      "/events?dateFilter=upcoming&limit=4"
+      "/events?dateFilter=active-upcoming&limit=4"
     );
     return response.events;
   },
@@ -90,7 +90,9 @@ export const eventsApi = {
   },
 
   getDiscoverEvents: async (): Promise<Event[]> => {
-    const response = await apiGet<PaginatedResponse<Event>>("/events?limit=8");
+    const response = await apiGet<PaginatedResponse<Event>>(
+      "/events?dateFilter=active-upcoming&limit=8"
+    );
     return response.data;
   },
 };
@@ -112,7 +114,7 @@ export const eventKeys = {
 
 // Query hooks
 export const useEvents = (
-  params?: EventFilters & { page?: number; limit?: number },
+  params?: EventFilters & { page?: number; limit?: number; dateFilter?: string },
   options?: Omit<
     UseQueryOptions<PaginatedResponse<Event>>,
     "queryKey" | "queryFn"

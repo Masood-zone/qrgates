@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     const limit = Number.parseInt(searchParams.get("limit") || "10");
     const page = Number.parseInt(searchParams.get("page") || "1");
     const organizerId = searchParams.get("organizerId");
-    const dateFilter = searchParams.get("dateFilter"); // 'upcoming', 'past', 'ongoing'
+    const dateFilter = searchParams.get("dateFilter"); // 'active-upcoming', 'upcoming', 'past', 'ongoing'
+    const location = searchParams.get("location")?.toLowerCase() || "";
 
     const now = new Date();
     let where: any = {
@@ -18,14 +19,18 @@ export async function GET(request: NextRequest) {
       ...(organizerId && { organizerId }),
     };
 
-    // Only apply date-based filtering if dateFilter is explicitly provided
-    if (dateFilter === "upcoming") {
+    if (dateFilter === "active-upcoming") {
       where.endDate = { gte: now };
+      where.status = status ? status : { not: "CANCELLED" };
+    } else if (dateFilter === "upcoming") {
+      where.startDate = { gt: now };
+      where.status = status ? status : { not: "CANCELLED" };
     } else if (dateFilter === "past") {
       where.endDate = { lt: now };
     } else if (dateFilter === "ongoing") {
       where.startDate = { lte: now };
       where.endDate = { gte: now };
+      where.status = status ? status : { not: "CANCELLED" };
     } else if (status) {
       // Only filter by status if provided
       where.status = status;
@@ -37,6 +42,10 @@ export async function GET(request: NextRequest) {
         { title: { contains: search, mode: "insensitive" } },
         { description: { contains: search, mode: "insensitive" } },
       ];
+    }
+
+    if (location) {
+      where.location = { contains: location, mode: "insensitive" };
     }
 
     // If neither status nor dateFilter is provided, return all events (optionally, you can default to upcoming if you want)

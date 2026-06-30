@@ -1,37 +1,18 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
-import { useEvents } from "@/lib/api/events";
+import { useMemo, useState } from "react";
+import { CalendarDays, ChevronLeft, ChevronRight, MapPin, Search, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, Search, Filter } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { formatDate } from "@/lib/date-utils";
-import { CartItem, useCartStore } from "@/lib/store/cart-store";
-import { toast } from "sonner";
-import { Event } from "@/lib/services";
-import { TicketTypeSelector } from "@/components/ui/ticket-type-selector";
-import { Skeleton } from "../ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { PublicEventCard } from "@/components/events/public-event-card";
+import { useEvents, useFeaturedEvents } from "@/lib/api/events";
 
 const categories = [
-  "All Categories",
+  "All",
   "conference",
   "workshop",
   "seminar",
@@ -44,330 +25,301 @@ const categories = [
   "other",
 ];
 
-const statusOptions = ["All Status", "UPCOMING", "ONGOING", "COMPLETED"];
+const statusOptions = ["All", "UPCOMING", "ONGOING"];
 
 export function EventsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  const [selectedStatus, setSelectedStatus] = useState("All Status");
-  const [sortBy, setSortBy] = useState("startDate");
-  const [selectedTicketTypeIds, setSelectedTicketTypeIds] = useState<
-    Record<string, string>
-  >({});
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [locationTerm, setLocationTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [dateRange, setDateRange] = useState("any");
 
-  const { addItem } = useCartStore();
-
-  const filters = {
-    page: currentPage,
-    limit: 12,
-    search: searchTerm || undefined,
-    category:
-      selectedCategory !== "All Categories" ? selectedCategory : undefined,
-    status: selectedStatus !== "All Status" ? selectedStatus : undefined,
-  };
+  const filters = useMemo(
+    () => ({
+      page: currentPage,
+      limit: 9,
+      dateFilter: "active-upcoming",
+      search: searchTerm || undefined,
+      location: locationTerm || undefined,
+      category: selectedCategory !== "All" ? selectedCategory : undefined,
+      status: selectedStatus !== "All" ? selectedStatus : undefined,
+    }),
+    [currentPage, searchTerm, locationTerm, selectedCategory, selectedStatus]
+  );
 
   const { data: eventsData, isLoading, error } = useEvents(filters);
+  const { data: recommendedEvents = [] } = useFeaturedEvents();
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = (event: React.FormEvent) => {
+    event.preventDefault();
     setCurrentPage(1);
   };
-  const availableTickets =
-    (eventsData?.totalTickets ?? 0) - (eventsData?.soldTickets ?? 0);
 
-  const handleTicketSelect = (eventId: string, typeId: string, qty: number) => {
-    setSelectedTicketTypeIds((prev) => ({ ...prev, [eventId]: typeId }));
-    setQuantities((prev) => ({ ...prev, [eventId]: qty }));
+  const clearFilters = () => {
+    setSearchTerm("");
+    setLocationTerm("");
+    setSelectedCategory("All");
+    setSelectedStatus("All");
+    setDateRange("any");
+    setCurrentPage(1);
   };
-
-  const handleAddToCart = (event: Event) => {
-    const ticketTypeId =
-      selectedTicketTypeIds[event.id] || event.ticketTypes?.[0]?.id;
-    const ticketType = event.ticketTypes?.find((t) => t.id === ticketTypeId);
-    const quantity = quantities[event.id] || 1;
-    if (!ticketType) return;
-    addItem({
-      id: `${event.id}-${ticketType.id}-${Date.now()}`,
-      eventId: event.id,
-      eventTitle: event.title,
-      eventImage: event.mainImage || undefined,
-      eventDate: event.startDate.toString(),
-      eventLocation: event.location,
-      ticketType: ticketType.name,
-      ticketTypeId: ticketType.id,
-      price: ticketType.price,
-      quantity: quantity,
-      maxQuantity: Math.min(10, ticketType.quantity - ticketType.soldCount),
-      title: event.title,
-      image: event.mainImage || "",
-      startDate: event.startDate.toString(),
-    });
-    toast("Added to cart", {
-      description: `${quantity} ${ticketType.name} ticket${
-        quantity > 1 ? "s" : ""
-      } for ${event.title}`,
-    });
-  };
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">
-            Error Loading Events
-          </h1>
-          <p className="">Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="rounded-lg bg-muted text-foreground p-5 mb-6 shadow flex flex-col items-center justify-center text-center border border-border">
-          <h2 className="text-xl md:text-2xl font-semibold mb-1">
-            Welcome to QRGATE!
-          </h2>
-          <p className="text-base md:text-lg">
-            We're glad you're here. Explore, discover, and join events that
-            inspire you.
-          </p>
-        </div>
-        <h1 className="text-3xl font-bold mb-2">All Events</h1>
-        <p className="">Discover amazing events happening around you</p>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-background rounded-lg shadow-sm p-6 mb-8">
-        <form onSubmit={handleSearch} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2  w-4 h-4" />
+    <div className="bg-background">
+      <section className="relative flex min-h-[360px] items-center justify-center overflow-hidden bg-slate-950">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/hero-bg-3.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-slate-950/10" />
+        <div className="relative z-10 w-full max-w-4xl px-5 text-center">
+          <h1 className="mb-5 text-3xl font-extrabold text-white md:text-4xl">
+            Discover Extraordinary Events
+          </h1>
+          <form
+            onSubmit={handleSearch}
+            className="rounded-xl bg-white/95 p-2 shadow-2xl backdrop-blur md:flex md:items-center md:gap-2"
+          >
+            <div className="flex flex-1 items-center gap-3 border-b border-border px-3 py-2 md:border-b-0 md:border-r">
+              <Search className="h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search events..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search by event name, artist..."
+                className="border-0 bg-transparent shadow-none focus-visible:ring-0"
               />
             </div>
-
-            <Select
-              value={selectedCategory}
-              onValueChange={setSelectedCategory}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger>
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {statusOptions.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {status}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* <Button type="submit" className=" hover:bg-primary">
-              <Filter className="w-4 h-4 mr-2" />
-              Apply Filters
-            </Button> */}
-          </div>
-        </form>
-      </div>
-
-      {/* Events Grid */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <Skeleton className="h-48  rounded-t-lg" />
-              <CardHeader>
-                <Skeleton className="h-4  rounded w-3/4" />
-                <Skeleton className="h-3  rounded w-1/2" />
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Skeleton className="h-3  rounded" />
-                  <Skeleton className="h-3  rounded w-2/3" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+            <div className="flex flex-1 items-center gap-3 px-3 py-2">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <Input
+                value={locationTerm}
+                onChange={(event) => setLocationTerm(event.target.value)}
+                placeholder="Location"
+                className="border-0 bg-transparent shadow-none focus-visible:ring-0"
+              />
+            </div>
+            <Button type="submit" className="w-full rounded-lg md:w-auto">
+              Search
+            </Button>
+          </form>
         </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-            {eventsData?.events?.map((event) => {
-              const ticketTypes = event.ticketTypes || [
-                {
-                  id: "standard",
-                  name: "Standard",
-                  price: event.price,
-                  quantity: event.totalTickets,
-                  soldCount: event.soldTickets,
-                  description: "Standard admission ticket",
-                },
-              ];
-              const selectedTypeId =
-                selectedTicketTypeIds[event.id] || ticketTypes[0].id;
-              const selectedType =
-                ticketTypes.find((t) => t.id === selectedTypeId) ||
-                ticketTypes[0];
-              const availableTickets =
-                selectedType.quantity - selectedType.soldCount;
-              const quantity = quantities[event.id] || 1;
-              return (
-                <Card
-                  key={event.id}
-                  className="overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  <div className="relative h-48">
-                    <Image
-                      src={
-                        event.mainImage ||
-                        "/placeholder.svg?height=200&width=300"
-                      }
-                      alt={event.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <Badge
-                      className={`absolute top-2 right-2 ${
-                        event.status === "UPCOMING"
-                          ? "bg-green-500"
-                          : event.status === "ONGOING"
-                          ? "bg-blue-500"
-                          : event.status === "COMPLETED"
-                          ? "bg-gray-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      {event.status}
-                    </Badge>
-                  </div>
+      </section>
 
-                  <CardHeader>
-                    <h3 className="font-semibold text-lg line-clamp-2">
-                      {event.title}
-                    </h3>
-                    <p className="text-sm  line-clamp-2">{event.description}</p>
-                  </CardHeader>
-
-                  <CardContent className="space-y-2">
-                    <div className="flex items-center text-sm ">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {formatDate(event.startDate)}
-                    </div>
-                    <div className="flex items-center text-sm ">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      {event.location}
-                    </div>
-                    <div className="flex items-center text-sm ">
-                      <Users className="w-4 h-4 mr-2" />
-                      {event.totalTickets - event.soldTickets} tickets left
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-primary">
-                        Ghc{event.price}
-                      </span>
-                      <Badge variant="secondary">{event.category}</Badge>
-                    </div>
-                    {event.ticketTypes && event.ticketTypes.length > 0 && (
-                      <div className="mb-3">
-                        <TicketTypeSelector
-                          ticketTypes={ticketTypes}
-                          onSelect={(typeId, qty) =>
-                            handleTicketSelect(event.id, typeId, qty)
-                          }
-                          initialTypeId={selectedTypeId}
-                        />
-                      </div>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex gap-2">
-                    <Button asChild variant="outline" className="flex-1">
-                      <Link href={`/events/${event.id}`}>View Details</Link>
-                    </Button>
-                    <Button
-                      onClick={() => handleAddToCart(event)}
-                      className="flex-1"
-                      disabled={availableTickets <= 0}
-                    >
-                      Add to Cart
-                    </Button>
-                  </CardFooter>
-                </Card>
-              );
-            })}
+      <section className="overflow-hidden bg-secondary/60 py-10">
+        <div className="mx-auto max-w-7xl px-5">
+          <div className="mb-5 flex items-end justify-between">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">
+                Picks for you
+              </p>
+              <h2 className="mt-1 text-2xl font-extrabold">Recommended Events</h2>
+            </div>
+            <div className="hidden gap-2 sm:flex">
+              <Button variant="outline" size="icon" aria-label="Scroll left">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" aria-label="Scroll right">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
+          <div className="flex snap-x gap-6 overflow-x-auto pb-4">
+            {recommendedEvents.slice(0, 6).map((event) => (
+              <div key={event.id} className="min-w-[310px] snap-start">
+                <PublicEventCard event={event} compact action="view" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* Pagination */}
-          {eventsData && eventsData?.pagination?.pages > 1 && (
-            <div className="flex justify-center items-center space-x-2 mt-8">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
+      <section className="mx-auto max-w-7xl px-5 py-16">
+        <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
+          <aside>
+            <div className="sticky top-24 space-y-7 rounded-xl border border-border/70 bg-card p-5 shadow-sm">
+              <h3 className="flex items-center gap-2 text-lg font-bold">
+                <Search className="h-5 w-5 text-primary" />
+                Filters
+              </h3>
 
-              {Array.from(
-                { length: eventsData?.pagination?.pages },
-                (_, i) => i + 1
-              ).map((page) => (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? "default" : "outline"}
-                  onClick={() => setCurrentPage(page)}
-                  className={
-                    currentPage === page ? "bg-background hover:bg-primary" : ""
-                  }
+              <div>
+                <label className="mb-3 block text-sm font-bold text-muted-foreground">
+                  Category
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {categories.slice(0, 8).map((category) => (
+                    <Button
+                      key={category}
+                      type="button"
+                      size="sm"
+                      variant={selectedCategory === category ? "default" : "outline"}
+                      className="rounded-full"
+                      onClick={() => {
+                        setSelectedCategory(category);
+                        setCurrentPage(1);
+                      }}
+                    >
+                      {category === "All" ? "All" : category}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-muted-foreground">
+                  Event Status
+                </label>
+                <Select
+                  value={selectedStatus}
+                  onValueChange={(value) => {
+                    setSelectedStatus(value);
+                    setCurrentPage(1);
+                  }}
                 >
-                  {page}
-                </Button>
-              ))}
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status === "All" ? "All active events" : status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Button
-                variant="outline"
-                onClick={() =>
-                  setCurrentPage((prev) =>
-                    Math.min(prev + 1, eventsData?.pagination?.pages)
-                  )
-                }
-                disabled={currentPage === eventsData?.pagination?.pages}
-              >
-                Next
+              <div>
+                <label className="mb-2 block text-sm font-bold text-muted-foreground">
+                  Date Range
+                </label>
+                <Select
+                  value={dateRange}
+                  onValueChange={(value) => {
+                    setDateRange(value);
+                    setSelectedStatus(
+                      value === "future"
+                        ? "UPCOMING"
+                        : value === "live"
+                          ? "ONGOING"
+                          : "All"
+                    );
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any Date</SelectItem>
+                    <SelectItem value="future">Upcoming</SelectItem>
+                    <SelectItem value="live">Happening Now</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Online Events</span>
+                <Switch disabled />
+              </div>
+
+              <Button variant="secondary" className="w-full" onClick={clearFilters}>
+                Clear All
               </Button>
             </div>
-          )}
+          </aside>
 
-          {/* Results Info */}
-          {eventsData && (
-            <div className="text-center  mt-4">
-              Showing {eventsData?.data?.length} of{" "}
-              {eventsData?.pagination?.total} events
-            </div>
-          )}
-        </>
-      )}
+          <div>
+            {error ? (
+              <div className="rounded-xl border bg-card p-10 text-center">
+                <h2 className="text-2xl font-bold text-destructive">
+                  Error Loading Events
+                </h2>
+                <p className="mt-2 text-muted-foreground">Please try again later.</p>
+              </div>
+            ) : isLoading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 9 }).map((_, index) => (
+                  <div key={index} className="rounded-xl border bg-card p-4">
+                    <Skeleton className="aspect-[4/3] rounded-lg" />
+                    <Skeleton className="mt-5 h-5 w-2/3" />
+                    <Skeleton className="mt-3 h-4 w-full" />
+                    <Skeleton className="mt-6 h-10 w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : eventsData?.events?.length ? (
+              <>
+                <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                  <div>
+                    <h2 className="text-2xl font-extrabold">Browse Events</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Showing active and upcoming events only.
+                    </p>
+                  </div>
+                  <div className="flex gap-3 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <ShieldCheck className="h-4 w-4 text-primary" />
+                      Verified QR tickets
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Zap className="h-4 w-4 text-primary" />
+                      Fast booking
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                  {eventsData.events.map((event) => (
+                    <PublicEventCard key={event.id} event={event} />
+                  ))}
+                </div>
+
+                {eventsData.pagination.pages > 1 && (
+                  <div className="mt-10 flex justify-center gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    {Array.from({ length: eventsData.pagination.pages }, (_, index) => index + 1).map((page) => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        setCurrentPage((page) =>
+                          Math.min(page + 1, eventsData.pagination.pages)
+                        )
+                      }
+                      disabled={currentPage === eventsData.pagination.pages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="rounded-xl border border-dashed bg-card p-12 text-center">
+                <CalendarDays className="mx-auto h-12 w-12 text-primary" />
+                <h2 className="mt-4 text-2xl font-extrabold">No events found</h2>
+                <p className="mt-2 text-muted-foreground">
+                  Try another search or category. Completed and cancelled events
+                  are hidden from public booking.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
