@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
+import { notifyAccountSuspended } from "@/lib/email/notifications";
 import prisma from "@/lib/prisma";
 
 export async function PUT(
@@ -12,6 +13,11 @@ export async function PUT(
   const { id } = await context.params;
   const body = await request.json();
   const { name, phone, address, profileImage, status } = body;
+
+  const current = await prisma.user.findUnique({
+    where: { id },
+    select: { status: true },
+  });
 
   const organizer = await prisma.user.update({
     where: { id, role: "ORGANIZER" },
@@ -37,6 +43,14 @@ export async function PUT(
       createdAt: true,
     },
   });
+
+  if (current?.status !== "SUSPENDED" && organizer.status === "SUSPENDED") {
+    await notifyAccountSuspended({
+      email: organizer.email,
+      name: organizer.name,
+      role: "organizer",
+    });
+  }
 
   return NextResponse.json({ organizer });
 }
@@ -70,8 +84,15 @@ export async function DELETE(
     const suspended = await prisma.user.update({
       where: { id },
       data: { status: "SUSPENDED" },
-      select: { id: true, status: true },
+      select: { id: true, email: true, name: true, status: true },
     });
+    if (organizer.status !== "SUSPENDED") {
+      await notifyAccountSuspended({
+        email: suspended.email,
+        name: suspended.name,
+        role: "organizer",
+      });
+    }
     return NextResponse.json({
       message: "Organizer has dependent records and was suspended instead",
       organizer: suspended,

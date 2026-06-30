@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
+import { notifyAccountSuspended } from "@/lib/email/notifications";
 import prisma from "@/lib/prisma";
 
 export async function PATCH(
@@ -16,6 +17,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
+  const current = await prisma.user.findUnique({
+    where: { id },
+    select: { status: true },
+  });
+
   const user = await prisma.user.update({
     where: { id, role: "USER" },
     data: { status },
@@ -29,6 +35,14 @@ export async function PATCH(
       _count: { select: { orders: true, tickets: true } },
     },
   });
+
+  if (current?.status !== "SUSPENDED" && user.status === "SUSPENDED") {
+    await notifyAccountSuspended({
+      email: user.email,
+      name: user.name,
+      role: "user",
+    });
+  }
 
   return NextResponse.json({ user });
 }
