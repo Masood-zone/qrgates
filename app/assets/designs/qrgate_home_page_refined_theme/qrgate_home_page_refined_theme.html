@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QRGate | Buy, Sell &amp; Verify Event Tickets Effortlessly</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#dbe2fa",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f0f1f3",
+                        "background": "#f8f9fb",
+                        "on-secondary-fixed-variant": "#3f465b",
+                        "surface-bright": "#f8f9fb",
+                        "on-secondary-container": "#5b6278",
+                        "on-error": "#ffffff",
+                        "surface-container": "#edeef0",
+                        "tertiary-fixed-dim": "#bfc6dd",
+                        "surface": "#f8f9fb",
+                        "surface-variant": "#e1e2e4",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d8dff9",
+                        "on-background": "#191c1e",
+                        "primary": "#ba0033",
+                        "surface-container-high": "#e7e8ea",
+                        "secondary-fixed-dim": "#bfc6df",
+                        "primary-fixed-dim": "#ffb3b5",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#5b4040",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d9dadc",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#ffdada",
+                        "tertiary-container": "#6d7489",
+                        "on-secondary-fixed": "#141b2e",
+                        "secondary": "#575e74",
+                        "inverse-surface": "#2e3132",
+                        "on-tertiary-container": "#fefcff",
+                        "on-tertiary-fixed": "#141b2c",
+                        "tertiary": "#545c70",
+                        "inverse-primary": "#ffb3b5",
+                        "primary-container": "#df2848",
+                        "on-primary-fixed": "#40000b",
+                        "outline": "#906f70",
+                        "surface-tint": "#be0135",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#3f4759",
+                        "on-primary-container": "#fffbff",
+                        "secondary-fixed": "#dbe2fc",
+                        "outline-variant": "#e4bdbe",
+                        "on-primary-fixed-variant": "#920026",
+                        "surface-container-highest": "#e1e2e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "stack-md": "16px",
+                        "section-padding": "80px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "stack-lg": "32px",
+                        "gutter": "24px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "caption": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hero-overlay {
+            background: linear-gradient(rgba(18, 25, 44, 0.7), rgba(18, 25, 44, 0.9));
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+        }
+        .section-curve {
+            clip-path: ellipse(150% 100% at 50% 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-lg shadow-lg">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+</div>
+<span class="text-headline-md font-headline-md font-bold text-on-surface">QRGate</span>
+</div>
+<div class="hidden md:flex items-center gap-stack-lg">
+<a class="text-primary font-bold border-b-2 border-primary font-label-md text-label-md" href="#">Home</a>
+<a class="text-on-secondary-container font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Discover</a>
+<a class="text-on-secondary-container font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Create</a>
+<a class="text-on-secondary-container font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">How It Works</a>
+<a class="text-on-secondary-container font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Pricing</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-1 text-on-surface font-medium hover:text-primary transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="hidden sm:inline font-label-md text-label-md">Cart</span>
+</button>
+<button class="bg-primary text-white px-6 py-2 rounded-lg font-label-md text-label-md font-bold hover:bg-primary-container transition-all active:scale-95">Join Us Now</button>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-variant rounded-full transition-colors">light_mode</button>
+</div>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[870px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A cinematic, wide shot of a high-energy music concert at night with purple and blue stage lights and laser beams cutting through a light haze. The crowd is visible as silhouettes with their hands up in excitement. The image captures the vibrant, professional atmosphere of a premium event with tech-driven lighting and deep navy tones." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZjgfR4zN7m9w9WCalnOcmzZLa8BiYeeIC76oXcGlML-NiW3znKAvFI2Q5GMIqUp1kiLQoBaHlI9todB4IMIQjUMOC9Dy62zpeDRmqRKqeywPNvPPtynUo7IbfilE-28sIyyuQql-y-wnoTo9vJbQe0c3qFXwUPJxuCzp-YA2_kmXPjtZuZfSflRrTKgxUzvhTJUKMvWZs09G_x3YU84VJyGEF1-2C2uPpkhAUwC1nNdSue9jir_YvoQBF1Rj71Ntj_hcj2YNoKB4')"></div>
+<div class="absolute inset-0 hero-overlay"></div>
+<div class="relative z-10 text-center px-margin-mobile max-w-4xl mx-auto space-y-stack-lg">
+<span class="inline-block px-4 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-primary-fixed-dim font-label-md text-label-md uppercase tracking-wider">The Future of Event Entry</span>
+<h1 class="text-white font-display-lg text-display-lg sm:text-[64px] leading-tight">
+                    Buy, Sell &amp; Verify Event Tickets <span class="text-primary-fixed-dim">Effortlessly</span>
+</h1>
+<p class="text-surface-variant font-body-lg text-body-lg max-w-2xl mx-auto">
+                    The ultimate all-in-one platform for organizers to launch, manage, and verify events with instant QR-code generation and secure transactions.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+<button class="bg-primary text-white px-8 py-4 rounded-xl font-headline-md text-headline-md flex items-center justify-center gap-2 hover:bg-primary-container transition-all hover:shadow-[0_0_20px_rgba(186,0,51,0.4)]">
+                        Discover Events <span class="material-symbols-outlined">explore</span>
+</button>
+<button class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-xl font-headline-md text-headline-md flex items-center justify-center gap-2 hover:bg-white/20 transition-all">
+                        Create Your Event <span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+<!-- Stats Bar -->
+<div class="absolute bottom-0 left-0 right-0 glass-card border-t border-outline-variant/30 py-8">
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="text-center">
+<div class="text-primary font-display-lg text-[32px] sm:text-[40px] leading-none mb-1">500k+</div>
+<div class="text-on-secondary-container font-label-md text-label-md uppercase tracking-widest">Tickets Sold</div>
+</div>
+<div class="text-center">
+<div class="text-primary font-display-lg text-[32px] sm:text-[40px] leading-none mb-1">1.2k+</div>
+<div class="text-on-secondary-container font-label-md text-label-md uppercase tracking-widest">Organizers</div>
+</div>
+<div class="text-center">
+<div class="text-primary font-display-lg text-[32px] sm:text-[40px] leading-none mb-1">99.9%</div>
+<div class="text-on-secondary-container font-label-md text-label-md uppercase tracking-widest">Uptime</div>
+</div>
+<div class="text-center">
+<div class="text-primary font-display-lg text-[32px] sm:text-[40px] leading-none mb-1">0.5s</div>
+<div class="text-on-secondary-container font-label-md text-label-md uppercase tracking-widest">Verification</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Workflow Section -->
+<section class="py-section-padding bg-background">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="text-center mb-16 space-y-4">
+<h2 class="font-headline-lg text-headline-lg text-on-background">Seamless Experience for Organizers</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">From the first draft to the final report, QRGate streamlines every step of your event management lifecycle.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="group relative p-8 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border-b-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 rounded-xl bg-secondary-container flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">edit_document</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Publish</h3>
+<p class="text-on-secondary-container text-body-md">Create your event in minutes with customizable ticket types and seat maps.</p>
+</div>
+<div class="group relative p-8 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border-b-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 rounded-xl bg-secondary-container flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Sell</h3>
+<p class="text-on-secondary-container text-body-md">Accept secure payments via credit cards, mobile money, and digital wallets.</p>
+</div>
+<div class="group relative p-8 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border-b-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 rounded-xl bg-secondary-container flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Verify</h3>
+<p class="text-on-secondary-container text-body-md">Fast on-site entry management with our industry-leading QR scanning technology.</p>
+</div>
+<div class="group relative p-8 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border-b-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 rounded-xl bg-secondary-container flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Report</h3>
+<p class="text-on-secondary-container text-body-md">Real-time data insights and post-event analytics to optimize your next launch.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Audience Section (Bento Grid Style) -->
+<section class="py-section-padding bg-on-secondary-fixed">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-stack-lg">
+<div class="max-w-xl space-y-4">
+<h2 class="font-headline-lg text-headline-lg text-white">Built for Every Type of Organization</h2>
+<p class="text-surface-dim">Whether you're a global enterprise or a community group, QRGate provides the tools you need to scale your ticket operations.</p>
+</div>
+<button class="text-white border-b-2 border-primary hover:text-primary transition-all pb-1 font-label-md text-label-md font-bold">View All Case Studies</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-gutter h-auto md:h-[600px]">
+<div class="md:col-span-2 relative overflow-hidden rounded-2xl group">
+<div class="absolute inset-0 bg-cover bg-center scale-105 group-hover:scale-100 transition-transform duration-700" data-alt="A modern university campus lecture hall with students focused on a presentation. The lighting is clean and bright, emphasizing an academic and institutional atmosphere with white and light blue accents." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrlEObGKnPMmiJa_A8fI8bMsbTnjMeIa-Bqf0IsX2t1WPb2uzN1nJJXnuQTOdxvEHN-_YN8ohU0S8RfvzBBIULogp-jER3QayLXZhMaSv8nk4qyVhUUhFJAT-k_BvCztrqwxA2kvKH3JaQwE-dRyYYGLzjya_VtsHcqL6emCqB8kp2XmLsh4Y6AEwBBAoB_A1akYFIXWnoVK4yu-f3yBRUNgOQuzVPoLBSIZbB72x3a1KWvFH7PZrtwb1gADEQlIsPJb3cx08cedg')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h4 class="font-headline-md text-headline-md">Institutions</h4>
+<p class="text-sm opacity-80">Convocations &amp; Alumni Meetups</p>
+</div>
+</div>
+<div class="md:col-span-4 relative overflow-hidden rounded-2xl group">
+<div class="absolute inset-0 bg-cover bg-center scale-105 group-hover:scale-100 transition-transform duration-700" data-alt="A sleek corporate networking event in a high-rise office lounge with floor-to-ceiling windows. Professionals in smart attire are engaging in conversation. The color palette is professional navy, glass, and warm interior lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC4qebOZudBwULwlJVlMJUumhGYnqzDYvapklxhe14waiDiDFZ0DuHTu-zZogAbAZf5OGXZvOk1OWuzkKceNGisFzvcYw_DhghtZBDlT0rPoCMfaoAYyDRNiKPY8pGh5JN3oqMiyLEXGFQc8XhHyvK4zFAVx7r37RlGfKarwr_IZvyUVWohvXdQs4gLL1BNLBSYPeljZQUKSotNZKDsOops1BDI3NgTseLBsRxt_aqWrIU517ylDAADN7GBbQdUDJPT_KvYQVyhk50')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h4 class="font-headline-md text-headline-md">Corporate</h4>
+<p class="text-sm opacity-80">Summits, Expos &amp; Product Launches</p>
+</div>
+</div>
+<div class="md:col-span-3 relative overflow-hidden rounded-2xl group">
+<div class="absolute inset-0 bg-cover bg-center scale-105 group-hover:scale-100 transition-transform duration-700" data-alt="A high-energy electronic music festival with a massive stage, vibrant LED walls, and thousands of fans with glowing wristbands. The style is neon, high-contrast, and dynamic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAd77wx8Wv7PEPJ6_T2elz6f8plj8Zbsietu40OiLGsxF1WFPewnUmMw-1_-zW-bPK_gZ43g_M32aN7roPuhDwa3K5FkR6BkHtX5zXZDwBiEJbT3wk7azE56XOLBQRYZEl_8RUfDnWnD21h8HPmzaU10SlfuOqsITGrye_mEK4uE_3B-gPCQF6NBMe447u6NVjHlm16xUM4-nhvw0N8uligeCU8tqLPotzwzp4bCcpKiAjaLLVVwkMGtNgXYjXnPYhERotqb6tvkbI')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h4 class="font-headline-md text-headline-md">Entertainment</h4>
+<p class="text-sm opacity-80">Concerts, Festivals &amp; Nightlife</p>
+</div>
+</div>
+<div class="md:col-span-1 relative overflow-hidden rounded-2xl group bg-primary/10 border border-primary/20 flex flex-col justify-center items-center text-center p-4">
+<span class="material-symbols-outlined text-primary text-[48px] mb-2">church</span>
+<h4 class="font-headline-md text-headline-md text-white">Churches</h4>
+</div>
+<div class="md:col-span-1 relative overflow-hidden rounded-2xl group bg-secondary/10 border border-secondary/20 flex flex-col justify-center items-center text-center p-4">
+<span class="material-symbols-outlined text-secondary-container text-[48px] mb-2">volunteer_activism</span>
+<h4 class="font-headline-md text-headline-md text-white">NGOs</h4>
+</div>
+<div class="md:col-span-1 relative overflow-hidden rounded-2xl group bg-surface-container-high/10 border border-surface-container-high/20 flex flex-col justify-center items-center text-center p-4">
+<span class="material-symbols-outlined text-surface-container-highest text-[48px] mb-2">account_balance</span>
+<h4 class="font-headline-md text-headline-md text-white">Govt</h4>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Events -->
+<section class="py-section-padding bg-surface">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="flex items-center justify-between mb-12">
+<h2 class="font-headline-lg text-headline-lg text-on-background">Explore Trending Events</h2>
+<a class="flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all" href="#">See All Events <span class="material-symbols-outlined">arrow_forward</span></a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg">
+<!-- Event Card 1 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A promotional flyer for a tech conference titled TechPulse 2025. It features futuristic digital art, deep blue and cyan gradients, and silhouettes of high-tech hardware. The lighting is sharp and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYEJG6EdPftzx-TpHL4eMbWZv8Z7p6n23TUtRiS7MGvMq9EtJTWksAJwe0ms5vxxXbpiBvzh4L0g4MYDqs7cz1_ZxXRPnCiRHCY7ZrbxPfeMLkYRiPobAITg2T58dvUhB9MyadA5Bq199i-dWqfPknuY_ta_xK5SxHX2Sq3_iJqjYBE_cvyVmBodptsL1kBmUeAOH-ioG6X_JFg5vRnD751PIZ8-DZ309MSHz7XwXqOvURRZmMff9hriiJzcZZkEwc8KN9EUVQCIg"/>
+<div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-full font-label-md text-label-md font-bold text-primary shadow-lg">Tech</div>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex gap-4 text-on-surface-variant font-label-md text-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">calendar_today</span> Oct 24, 2025</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">location_on</span> Cape Coast</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background leading-tight">Global AI Summit: The African Perspective</h3>
+<div class="flex items-center justify-between pt-2 border-t border-surface-variant">
+<span class="text-primary font-bold font-headline-md text-headline-md">$45.00</span>
+<button class="bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary-container transition-colors">Book Now</button>
+</div>
+</div>
+</div>
+<!-- Event Card 2 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Vibrant artwork for a summer music festival titled Rhythm &amp; Waves. The background shows a sunset over a beach with palm tree silhouettes and colorful abstract waves. The colors are warm orange, pink, and deep purple." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGVPOq5AiaLSIZmm3B95dS5ut4li3lFs-m8zinS1LF3RGg-XiILBYta1LIlnZTnqDj2d9rDBqGD1j7nW66ZpMGKLOwXqjc3GnAH1OZSkwBpWiPADWi_VjC-9qgIqJuCivcmbhh-p1zs-J6XYzBrQgFsNQIXkq5jo15Sl6WrC_9MeESzmOE9OCellFrZJMmT58305YXs8MMRLJcrCZ06EJwlbuiDaqPiab_qzfDoQBeG4ORZJrmasV35BD32yvC02m9KgWXEmf0Hck"/>
+<div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-full font-label-md text-label-md font-bold text-primary shadow-lg">Music</div>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex gap-4 text-on-surface-variant font-label-md text-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">calendar_today</span> Nov 12, 2025</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">location_on</span> Accra, Ghana</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background leading-tight">Rhythm &amp; Waves: Afrobeat Music Festival</h3>
+<div class="flex items-center justify-between pt-2 border-t border-surface-variant">
+<span class="text-primary font-bold font-headline-md text-headline-md">$25.00</span>
+<button class="bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary-container transition-colors">Book Now</button>
+</div>
+</div>
+</div>
+<!-- Event Card 3 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A sophisticated business networking gala dinner. Long tables with elegant place settings, candlelight, and white floral arrangements in a luxury ballroom. The lighting is warm, soft, and high-end." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6vEMktzCrcWtW-Tz9N5VigXkaSSGlPgZZId5LsJyYt86iAOxJY1ym4O-NqtVopLB-KuZikn_d2_aDmKX4MbiPXFy2R-XgKnqJcgT2m8vlmM-bOqeUl4WiTZ4ciWnNr6IAmoQGZ_aH_yb6RTToHuvhNoFqJTylvOCNH4Y2LPQTxRA8DH9pzTH90aOF0zVjIaHa8wEcc0BvOwoR8lpqt5iy-RjYd9RtMMZjOVZs5VTopXYD5gcHlbMfgiZwRS9sD3S45MLjA_j8Fw4"/>
+<div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-full font-label-md text-label-md font-bold text-primary shadow-lg">Corporate</div>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex gap-4 text-on-surface-variant font-label-md text-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">calendar_today</span> Dec 05, 2025</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">location_on</span> Kumasi City</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background leading-tight">Leaders Circle: Executive Gala Night</h3>
+<div class="flex items-center justify-between pt-2 border-t border-surface-variant">
+<span class="text-primary font-bold font-headline-md text-headline-md">$120.00</span>
+<button class="bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary-container transition-colors">Book Now</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Partner CTA -->
+<section class="py-section-padding px-margin-mobile">
+<div class="max-w-container-max mx-auto bg-primary rounded-3xl overflow-hidden shadow-2xl relative">
+<div class="absolute inset-0 opacity-20">
+<div class="absolute top-0 right-0 w-96 h-96 bg-white blur-3xl rounded-full -mr-48 -mt-48"></div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-secondary-container blur-3xl rounded-full -ml-32 -mb-32"></div>
+</div>
+<div class="relative z-10 p-12 md:p-24 flex flex-col md:flex-row items-center justify-between gap-stack-lg">
+<div class="text-center md:text-left max-w-2xl space-y-4">
+<h2 class="font-display-lg text-[40px] text-white leading-tight">Ready to transform your event ticketing?</h2>
+<p class="text-primary-fixed font-body-lg text-body-lg">Partner with QRGate today and experience a 30% increase in ticket sales through our streamlined checkout and verification system.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-white text-primary px-8 py-4 rounded-xl font-bold font-headline-md text-headline-md shadow-xl hover:scale-105 transition-all">Get Started Free</button>
+<button class="bg-primary-container text-white border border-white/20 px-8 py-4 rounded-xl font-bold font-headline-md text-headline-md hover:bg-white/10 transition-all">Contact Sales</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-on-secondary-fixed text-surface-container-lowest">
+<div class="max-w-container-max mx-auto px-margin-desktop py-section-padding">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-stack-lg">
+<div class="space-y-6">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary flex items-center justify-center rounded-md">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+</div>
+<span class="text-headline-md font-headline-md font-bold text-white">QRGate</span>
+</div>
+<p class="text-surface-dim font-body-md text-body-md leading-relaxed">
+                        Revolutionizing event management with cutting-edge QR technology. Create, manage, and track your events seamlessly with our comprehensive platform.
+                    </p>
+<div class="space-y-3">
+<h4 class="font-label-md text-label-md uppercase tracking-widest font-bold">Get In Touch</h4>
+<div class="flex items-center gap-3 text-surface-dim">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="text-sm">University of Cape Coast, Ghana</span>
+</div>
+<div class="flex items-center gap-3 text-surface-dim">
+<span class="material-symbols-outlined text-primary">call</span>
+<span class="text-sm">+233 59 834 6928</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<h4 class="font-label-md text-label-md uppercase tracking-widest font-bold text-white">Quick Links</h4>
+<ul class="space-y-4">
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">About Us</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">Browse Events</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">Create Event</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">Pricing</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">Contact Us</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h4 class="font-label-md text-label-md uppercase tracking-widest font-bold text-white">Support</h4>
+<ul class="space-y-4">
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">My Account</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">My Events</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">My Tickets</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">Help Center</a></li>
+<li><a class="text-surface-dim hover:text-primary transition-colors text-body-md" href="#">Support</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h4 class="font-label-md text-label-md uppercase tracking-widest font-bold text-white">Stay Updated</h4>
+<p class="text-surface-dim text-body-md">Subscribe to our newsletter for the latest events and exclusive offers.</p>
+<div class="flex flex-col gap-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-surface-variant">mail</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white focus:border-primary outline-none transition-colors" placeholder="Enter your email..." type="email"/>
+</div>
+<button class="bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-colors group">
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">send</span> Subscribe
+                        </button>
+</div>
+</div>
+</div>
+<div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+<p class="text-surface-dim text-sm">© 2025 QRGate. All rights reserved.</p>
+<div class="flex gap-stack-md">
+<a class="text-surface-dim hover:text-white text-sm" href="#">Privacy Policy</a>
+<a class="text-surface-dim hover:text-white text-sm" href="#">Terms of Service</a>
+<a class="text-surface-dim hover:text-white text-sm" href="#">Cookie Policy</a>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors group" href="#">
+<img alt="Facebook" class="w-5 h-5 opacity-70 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5cVqd5NFTPqWHzcspeEP6XK8rBmFCZBGTST31UFUU51JG08cjRR1XLixCOGDnvqzlf5fA1FCUrGOJLOpssf76TleAhqS8Fcv7DBuIq4anETIaXG-1y1RVUKEferVyMdPfhqSnNRULennB-kTTUwmjC3Eba6z2PVH1fGfVxwm1_aOd-6eD2P_5s4IFYiGEr-UpRQ4IRFOwlzvkaMTJrHWY0H_RJy7gzXaay7FxC5Me4tS6ZqKpPb3ewjMgflQc5zz8Ap3YaW0mpJg"/>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors group" href="#">
+<img alt="Twitter" class="w-5 h-5 opacity-70 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdZF7MB5-dhBimcyLM5Ukm3n7s5bAW4drC40zUfRbBZGITkZGMDCopU2kL5sgHZogaGdJ7Y2us3Mxd3C1DSdSfqjITQ80qYdZblvITDnMT4FHOO3z_0IZa9AvYlqlBoEmrwvFQriUg20Ka4N-W_GIABxnZX9foJ71Tz1d0xofbMYeegCPwnWstMJXj_x_X5HCsZyutCUbjFlK6x6scJk86IvfMZPZiCMelp857ZfOvwDYoVvZWePz9-IoWQxnsenGX0T8d2UGfDn4"/>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors group" href="#">
+<img alt="Instagram" class="w-5 h-5 opacity-70 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOyCcigtHAdbK4Ff0IJfCrPEX6purP6id0m3Z5SqZHxWB_tqUIU6T-XuLN2tlCDJrOuNToU5u7zNUF7JGy5LLpUkc1rRt4yWB4HAw7tmJRT5gxUwpkob1RFdpvMICSpgOiAyZG5LUOzVOB7o3ZcUIM4e5fM3Xii0_1bWbpGyO93YIPrCPmHvoKkTJ3w0NNIOAXGpNZLb66j3ivASEHUhzkqr1qgA8WqeUe6rABqrA5HtyU664f5Tz_QihUqow1dh0CuBG2tSORVD8"/>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors group" href="#">
+<img alt="LinkedIn" class="w-5 h-5 opacity-70 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4JWVeAcl5etJYqIAHJnah6Y_48zZ_BGgxLGaCQy-F65VLiTv5bhxP8I4Lv8qVu9g3kF6TLl8DlrukReNPFknAW7IIwjrIgjWqIAMmQJPbbvJrdctJB8Ww0XusZ8rx3VH8ywC4pDlTUD8ZTmVlCHu5kyOW_rOObDLM5TzNQ1LWL-F5U_8MYwXCq8hK9Tmln105JRQXcLJFCrym_C2Rpjw11KOQTpNfsa2VhGjCh8p6kaL8ZekB7BompCLc8sC4E5OLPQA2ZmwbD94"/>
+</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- FAB for quick event creation -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 group">
+<span class="material-symbols-outlined text-[32px]">add</span>
+<span class="absolute right-full mr-4 bg-on-secondary-fixed text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity pointer-events-none font-bold">Host an Event</span>
+</button>
+<script>
+        // Simple scroll effect for navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-4');
+                nav.classList.add('shadow-md');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2');
+                nav.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>
