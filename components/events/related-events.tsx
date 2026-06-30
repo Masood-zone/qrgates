@@ -60,7 +60,7 @@ export function RelatedEvents({ events }: RelatedEventsProps) {
                     {event._count.tickets} attendees
                   </span>
                   <span className="font-bold text-primary">
-                    ${event.price.toFixed(2)}
+                    Ghc{event.price.toFixed(2)}
                   </span>
                 </div>
               </CardContent>

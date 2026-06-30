@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { initializePayment } from "@/lib/paystack";
+import { initializePayment, PaystackError } from "@/lib/paystack";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     if (!orderId) {
       return NextResponse.json(
         { error: "Order ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,17 +33,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
+    if (order.userId !== session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Check if order is already paid
     if (order.status === "COMPLETED") {
       return NextResponse.json(
         { error: "Order is already paid" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Generate a unique reference
     const reference = `qrgate-${Date.now()}-${Math.floor(
-      Math.random() * 1000000
+      Math.random() * 1000000,
     )}`;
 
     // Update order with reference
@@ -70,9 +74,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, data: paymentData });
   } catch (error) {
     console.error("Error initializing payment:", error);
+    if (error instanceof PaystackError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status && error.status >= 400 ? error.status : 502 },
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to initialize payment" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

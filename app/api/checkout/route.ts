@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
-import { initializePayment } from "@/lib/paystack";
+import { initializePayment, PaystackError } from "@/lib/paystack";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { orderId, items } = body;
+    const { orderId } = body;
 
     // Validate the order
     const order = await prisma.order.findUnique({
@@ -42,13 +42,13 @@ export async function POST(request: NextRequest) {
     // Initialize payment with Paystack
     const paymentData = {
       email: user.email,
-      amount: Math.round(order.total * 100), // Convert to kobo (smallest currency unit)
+      amount: order.total,
       metadata: {
         orderId: order.id,
         userId: user.id,
         eventId: order.eventId,
       },
-      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/verify?orderId=${order.id}`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/verify`,
     };
 
     const paymentResponse = await initializePayment(paymentData);
@@ -67,6 +67,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error processing checkout:", error);
+    if (error instanceof PaystackError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status && error.status >= 400 ? error.status : 502 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to process checkout" },
       { status: 500 }
