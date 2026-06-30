@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import MasoodImage from "@/public/masood.jpg";
 import EdwinImage from "@/public/edwin.jpg";
 import Mensah from "@/public/mensah.jpg";
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
