@@ -4,7 +4,15 @@ import type React from "react";
 import Link from "next/link";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Mail, MapPin, Phone, Send, Share2, UsersRound, Globe2 } from "lucide-react";
+import {
+  Mail,
+  MapPin,
+  Phone,
+  Send,
+  Share2,
+  UsersRound,
+  Globe2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,9 +47,9 @@ export function Footer() {
           <div>
             <Link href="/" className="mb-5 flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-extrabold">
-                QR
+                QG
               </span>
-              <span className="text-xl font-extrabold">QRGate</span>
+              <span className="text-xl font-extrabold">QuickGates</span>
             </Link>
             <p className="text-sm leading-6 text-slate-300">
               Revolutionizing event management with QR technology. Create,
@@ -50,11 +58,14 @@ export function Footer() {
             <div className="mt-6 space-y-3 text-sm text-slate-300">
               <p className="flex items-center gap-3">
                 <MapPin className="h-4 w-4 text-primary" />
-                University of Cape Coast, Ghana
+                USTED, Ghana
               </p>
-              <Link href="tel:+233598346928" className="flex items-center gap-3 hover:text-white">
+              <Link
+                href="tel:+233598346928"
+                className="flex items-center gap-3 hover:text-white"
+              >
                 <Phone className="h-4 w-4 text-primary" />
-                +233 59 834 6928
+                +233 59 567 0542
               </Link>
             </div>
           </div>
@@ -70,7 +81,10 @@ export function Footer() {
               <Link href="/events" className="block hover:text-white">
                 Browse Events
               </Link>
-              <Link href="/organizer/events/create" className="block hover:text-white">
+              <Link
+                href="/organizer/events/create"
+                className="block hover:text-white"
+              >
                 Create Event
               </Link>
               <Link href="/auth/signin" className="block hover:text-white">
@@ -87,7 +101,10 @@ export function Footer() {
               <Link href="/dashboard" className="block hover:text-white">
                 My Account
               </Link>
-              <Link href="/dashboard/tickets" className="block hover:text-white">
+              <Link
+                href="/dashboard/tickets"
+                className="block hover:text-white"
+              >
                 My Tickets
               </Link>
               <Link href="/dashboard/orders" className="block hover:text-white">
