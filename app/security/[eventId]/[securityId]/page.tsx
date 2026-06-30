@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, AlertTriangle } from "lucide-react";
 
 interface SecurityVerificationPageProps {
-  params: {
+  params: Promise<{
     eventId: string;
     securityId: string;
-  };
+  }>;
 }
 
 async function validateSecurityAccess(eventId: string, securityId: string) {
@@ -193,7 +193,7 @@ export default async function SecurityVerificationPage(
 
 // Generate metadata for the page
 export async function generateMetadata(props: {
-  params: { eventId: string; securityId: string };
+  params: Promise<{ eventId: string; securityId: string }>;
 }) {
   const params = await props.params;
   const { eventId, securityId } = params;

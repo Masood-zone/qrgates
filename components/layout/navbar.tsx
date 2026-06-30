@@ -159,7 +159,14 @@ export function Navbar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {user?.role === "ORGANIZER" ? (
+                  {user?.role === "ADMIN" ? (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ) : user?.role === "ORGANIZER" ? (
                     <DropdownMenuItem asChild>
                       <Link href="/organizer">
                         <User className="mr-2 h-4 w-4" />

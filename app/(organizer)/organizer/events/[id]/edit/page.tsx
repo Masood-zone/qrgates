@@ -3,9 +3,9 @@ import { EditEventPage } from "@/components/organizer/edit-event-page";
 import { PageLoader } from "@/components/ui/loader";
 
 interface EditEventPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditEvent({ params }: EditEventPageProps) {

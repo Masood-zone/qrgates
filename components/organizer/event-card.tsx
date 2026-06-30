@@ -65,7 +65,7 @@ export function EventCard({ event }: EventCardProps) {
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative h-48">
         <Image
-          src={event.image || "/placeholder.svg?height=200&width=400"}
+          src={event.mainImage || "/placeholder.svg?height=200&width=400"}
           alt={event.title}
           fill
           className="object-cover"
@@ -118,7 +118,7 @@ export function EventCard({ event }: EventCardProps) {
         <div className="space-y-2 text-sm text-gray-600">
           <div className="flex items-center">
             <Calendar className="w-4 h-4 mr-2" />
-            {formatDate(event.date)}
+            {formatDate(event.startDate)}
           </div>
           <div className="flex items-center">
             <MapPin className="w-4 h-4 mr-2" />

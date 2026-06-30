@@ -3,15 +3,16 @@ import { AttendeeManagementPage } from "@/components/organizer/attendee-manageme
 import { PageLoader } from "@/components/ui/loader"
 
 interface AttendeePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function EventAttendees({ params }: AttendeePageProps) {
+export default async function EventAttendees({ params }: AttendeePageProps) {
+  const { id } = await params
   return (
     <Suspense fallback={<PageLoader />}>
-      <AttendeeManagementPage eventId={params.id} />
+      <AttendeeManagementPage eventId={id} />
     </Suspense>
   )
 }

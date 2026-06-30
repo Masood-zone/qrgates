@@ -8,8 +8,9 @@ import { redirect } from "next/navigation";
 export async function generateMetadata({
   params,
 }: {
-  params: { orderId: string };
+  params: Promise<{ orderId: string }>;
 }) {
+  await params;
   return {
     title: "Checkout | QRGate",
   };
@@ -18,16 +19,17 @@ export async function generateMetadata({
 export default async function CheckoutPage({
   params,
 }: {
-  params: { orderId: string };
+  params: Promise<{ orderId: string }>;
 }) {
+  const { orderId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect(`/auth/signin?callbackUrl=/checkout/${params.orderId}`);
+    redirect(`/auth/signin?callbackUrl=/checkout/${orderId}`);
   }
 
   const order = await prisma.order.findUnique({
-    where: { id: params.orderId },
+    where: { id: orderId },
     include: {
       event: true,
       user: true,

@@ -3,14 +3,17 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string; officerId: string } }) {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string; officerId: string }> }
+) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const { id: eventId, officerId } = params
+    const { id: eventId, officerId } = await context.params
     const { active } = await request.json()
 
     // Verify the user is the organizer of this event
@@ -49,14 +52,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string; officerId: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string; officerId: string }> }
+) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const { id: eventId, officerId } = params
+    const { id: eventId, officerId } = await context.params
 
     // Verify the user is the organizer of this event
     const event = await prisma.event.findFirst({
