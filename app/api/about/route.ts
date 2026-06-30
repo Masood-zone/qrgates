@@ -1,8 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import MasoodImage from "@/public/masood.jpg";
-import EdwinImage from "@/public/edwin.jpg";
-import Mensah from "@/public/mensah.jpg";
+
+const builders = [
+  {
+    id: "builder-resford",
+    name: "Resford Gyasi Appiah",
+    role: "Builder",
+    image: "",
+    bio: "Student ID: 5221040153",
+    order: 1,
+    aboutId: "about-placeholder-id",
+  },
+  {
+    id: "builder-solomon",
+    name: "Twumasi Solomon",
+    role: "Builder",
+    image: "",
+    bio: "Student ID: 5221040150",
+    order: 2,
+    aboutId: "about-placeholder-id",
+  },
+  {
+    id: "builder-evans",
+    name: "Asamoah Evans",
+    role: "Builder",
+    image: "",
+    bio: "Student ID: 5221040149",
+    order: 3,
+    aboutId: "about-placeholder-id",
+  },
+  {
+    id: "builder-ernest",
+    name: "Allotey Ernest",
+    role: "Builder",
+    image: "",
+    bio: "Student ID: 5221040192",
+    order: 4,
+    aboutId: "about-placeholder-id",
+  },
+];
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,57 +55,36 @@ export async function GET(request: NextRequest) {
 
       const placeholder = {
         id: "about-placeholder-id",
-        mission: "Our mission is to connect the world through events.",
-        vision: "We envision a globally connected creative community.",
-        story: "Founded in 2020 to empower creators through technology.",
-        founded: 2020,
-        location: "Assin Foso, Ghana",
-        teamSize: 3,
-        eventsHosted: 120,
-        happyCustomers: 3500,
+        mission:
+          "To make event discovery, booking, and QR verification simple for organizers and attendees.",
+        vision:
+          "To become a trusted student-built ticketing platform for reliable, secure event access.",
+        story:
+          "QRGates was built as a practical event booking system focused on clear public discovery, fast checkout, and dependable QR-based entry.",
+        founded: 2026,
+        location: "University of Cape Coast, Ghana",
+        teamSize: 4,
+        eventsHosted: 24,
+        happyCustomers: 1200,
         values: [
-          "Innovation",
-          "Creativity",
-          "Community",
-          "Excellence",
-          "Integrity",
+          "Clarity",
+          "Security",
+          "Reliability",
+          "Teamwork",
           "Accessibility",
-          "Growth",
+          "Execution",
         ],
-        contactEmail: "contact@qrgates.vercel.app",
+        contactEmail: "info@qrgates.me",
         contactPhone: "+233 59 834 6928",
         contactWebsite: "https://qrgates.vercel.app",
         createdAt: now,
         updatedAt: now,
-        teamMembers: [
-          {
-            id: "member-1",
-            name: "Masood Acheampong",
-            role: "CEO & CTO",
-            image: MasoodImage,
-            bio: "Masood is the visionary behind the company.",
-            order: 1,
-            aboutId: "about-placeholder-id",
-          },
-          {
-            id: "member-2",
-            name: "Edwin Kofi Nyarkoh",
-            role: "CTO",
-            image: EdwinImage,
-            bio: "Edwin leads the tech team with passion.",
-            order: 2,
-            aboutId: "about-placeholder-id",
-          },
-          {
-            id: "member-3",
-            name: "Francis Mensah",
-            role: "Frontend Developer",
-            image: Mensah,
-            bio: "Francis brings ideas to life visually.",
-            order: 3,
-            aboutId: "about-placeholder-id",
-          },
-        ],
+        contact: {
+          email: "info@qrgates.me",
+          phone: "+233 59 834 6928",
+          website: "https://qrgates.vercel.app",
+        },
+        teamMembers: builders,
       };
 
       return NextResponse.json(placeholder, {
@@ -95,6 +110,11 @@ export async function GET(request: NextRequest) {
       contactEmail: aboutData.contactEmail,
       contactPhone: aboutData.contactPhone,
       contactWebsite: aboutData.contactWebsite,
+      contact: {
+        email: aboutData.contactEmail,
+        phone: aboutData.contactPhone,
+        website: aboutData.contactWebsite,
+      },
       createdAt: aboutData.createdAt,
       updatedAt: aboutData.updatedAt,
       teamMembers: aboutData.teamMembers.map((member) => ({

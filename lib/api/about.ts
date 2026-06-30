@@ -13,7 +13,7 @@ interface AboutData {
   mission: string
   vision: string
   story: string
-  founded: string
+  founded: string | number
   location: string
   teamSize: number
   eventsHosted: number
@@ -50,7 +50,6 @@ export const useAbout = () => {
     queryKey: ["about"],
     queryFn: async () => {
       const data = await apiGet<AboutData>("/about")
-      console.log("About data response:", data)
       return data
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
