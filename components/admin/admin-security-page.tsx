@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,7 @@ export function AdminSecurityPage() {
   const [officers, setOfficers] = useState<Officer[]>([]);
   const [events, setEvents] = useState<EventOption[]>([]);
   const [form, setForm] = useState(emptyForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditing = Boolean(form.id);
 
   const loadData = async () => {
@@ -47,13 +49,18 @@ export function AdminSecurityPage() {
 
   const submitOfficer = async (event: React.FormEvent) => {
     event.preventDefault();
-    await fetch(isEditing ? `/api/admin/security/${form.id}` : "/api/admin/security", {
-      method: isEditing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setForm(emptyForm);
-    loadData();
+    setIsSubmitting(true);
+    try {
+      await fetch(isEditing ? `/api/admin/security/${form.id}` : "/api/admin/security", {
+        method: isEditing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      setForm(emptyForm);
+      loadData();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const editOfficer = (officer: Officer) => {
@@ -99,8 +106,11 @@ export function AdminSecurityPage() {
             <div className="space-y-2"><Label>Event</Label><Select value={form.eventId} onValueChange={(value) => setForm({ ...form, eventId: value })}><SelectTrigger><SelectValue placeholder="Select event" /></SelectTrigger><SelectContent>{events.map((event) => <SelectItem key={event.id} value={event.id}>{event.title}</SelectItem>)}</SelectContent></Select></div>
             <div className="space-y-2"><Label>Password</Label><Input type="password" placeholder="security123" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} disabled={isEditing} /></div>
             <div className="flex gap-2 md:col-span-5">
-              <Button>{isEditing ? "Save Assignment" : "Create Assignment"}</Button>
-              {isEditing && <Button type="button" variant="outline" onClick={() => setForm(emptyForm)}>Cancel Edit</Button>}
+              <Button disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting ? (isEditing ? "Saving..." : "Creating...") : isEditing ? "Save Assignment" : "Create Assignment"}
+              </Button>
+              {isEditing && <Button type="button" variant="outline" onClick={() => setForm(emptyForm)} disabled={isSubmitting}>Cancel Edit</Button>}
             </div>
           </form>
         </CardContent>
