@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { requireAdmin } from "@/lib/admin-auth";
-import { transporter } from "@/lib/email/nodemailer";
 import { organizerOnboardingEmail } from "@/lib/email/email-templates";
+import { sendSafeMail } from "@/lib/email/mailer";
 import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
@@ -93,22 +93,16 @@ export async function POST(request: NextRequest) {
   });
 
   let emailSent = false;
-  try {
-    await transporter.sendMail({
-      from: `"QRGATE" <${process.env.EMAIL_USER}>`,
-      to: organizer.email,
-      subject: "Your QRGATE organizer account is ready",
-      html: organizerOnboardingEmail({
-        name: organizer.name || organizer.email,
-        email: organizer.email,
-        password: plainPassword,
-        loginUrl: `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/auth/signin`,
-      }),
-    });
-    emailSent = true;
-  } catch (error) {
-    console.error("Failed to send organizer onboarding email:", error);
-  }
+  emailSent = await sendSafeMail({
+    to: organizer.email,
+    subject: "Your QuickGates organizer account is ready",
+    html: organizerOnboardingEmail({
+      name: organizer.name || organizer.email,
+      email: organizer.email,
+      password: plainPassword,
+      loginUrl: `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/auth/signin`,
+    }),
+  });
 
   return NextResponse.json({ organizer, emailSent }, { status: 201 });
 }

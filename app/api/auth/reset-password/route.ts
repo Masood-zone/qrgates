@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { passwordResetSuccessEmail } from "@/lib/email/auth-emails";
-import { transporter } from "@/lib/email/nodemailer";
+import { sendSafeMail } from "@/lib/email/mailer";
 
 export async function POST(req: Request) {
   const { token, newPassword } = await req.json();
@@ -33,10 +33,9 @@ export async function POST(req: Request) {
   });
 
   // Send password reset success email
-  await transporter.sendMail({
-    from: `"QRGATE" <${process.env.EMAIL_USER}>`,
+  await sendSafeMail({
     to: user.email,
-    subject: "Your QRGATE Password Was Reset",
+    subject: "Your QuickGates Password Was Reset",
     html: passwordResetSuccessEmail(),
   });
 

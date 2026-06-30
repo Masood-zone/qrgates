@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { transporter } from "@/lib/email/nodemailer";
 import crypto from "crypto";
 import { forgotPasswordEmail } from "@/lib/email/auth-emails";
+import { sendSafeMail } from "@/lib/email/mailer";
 
 export async function POST(req: Request) {
   const { email } = await req.json();
@@ -22,8 +22,7 @@ export async function POST(req: Request) {
 
   const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${token}`;
 
-  await transporter.sendMail({
-    from: `"QRGATE" <${process.env.EMAIL_USER}>`,
+  await sendSafeMail({
     to: email,
     subject: "Reset your password",
     html: forgotPasswordEmail({ resetUrl }),
