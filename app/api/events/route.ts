@@ -1,5 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import {
+  getCategoryFilterValues,
+  normalizeEventCategory,
+} from "@/lib/event-categories";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,10 +18,14 @@ export async function GET(request: NextRequest) {
     const location = searchParams.get("location")?.toLowerCase() || "";
 
     const now = new Date();
+    const categoryValues = category ? getCategoryFilterValues(category) : [];
     let where: any = {
-      ...(category && { category: category.toLowerCase() }),
+      ...(categoryValues.length > 0 ? { category: { in: categoryValues } } : {}),
       ...(organizerId && { organizerId }),
     };
+    if (category && categoryValues.length === 0) {
+      where.category = "__invalid_category__";
+    }
 
     if (dateFilter === "active-upcoming") {
       where.endDate = { gte: now };
@@ -112,12 +120,17 @@ export async function POST(request: NextRequest) {
       ticketTypes = [], // array of ticket types
     } = body;
 
+    const normalizedCategory = normalizeEventCategory(category);
+    if (!normalizedCategory) {
+      return NextResponse.json({ error: "Invalid event category" }, { status: 400 });
+    }
+
     // Create the event
     const event = await prisma.event.create({
       data: {
         title,
         description,
-        category: category.toLowerCase(),
+        category: normalizedCategory,
         location,
         startDate: new Date(startDate),
         endDate: new Date(endDate),

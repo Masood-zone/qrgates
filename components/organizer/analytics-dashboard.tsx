@@ -35,6 +35,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { getEventCategoryLabel } from "@/lib/event-categories";
 
 export function AnalyticsDashboard() {
   const { data: session } = useSession();
@@ -90,11 +91,12 @@ export function AnalyticsDashboard() {
 
   // Category distribution
   const categoryData = events.reduce((acc, event) => {
-    const existing = acc.find((item) => item.name === event.category);
+    const categoryLabel = getEventCategoryLabel(event.category);
+    const existing = acc.find((item) => item.name === categoryLabel);
     if (existing) {
       existing.value += 1;
     } else {
-      acc.push({ name: event.category, value: 1 });
+      acc.push({ name: categoryLabel, value: 1 });
     }
     return acc;
   }, [] as { name: string; value: number }[]);

@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { normalizeEventCategory } from "@/lib/event-categories";
 
 export async function GET(
   request: NextRequest,
@@ -160,6 +161,13 @@ export async function PUT(
 
     // Remove images and ticketTypes from body to avoid direct update
     const { images, ...restEventData } = eventData;
+    if (restEventData.category !== undefined) {
+      const normalizedCategory = normalizeEventCategory(restEventData.category);
+      if (!normalizedCategory) {
+        return NextResponse.json({ error: "Invalid event category" }, { status: 400 });
+      }
+      restEventData.category = normalizedCategory;
+    }
 
     const event = await prisma.event.update({
       where: { id },

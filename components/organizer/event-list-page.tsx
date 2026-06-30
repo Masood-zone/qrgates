@@ -41,6 +41,7 @@ import Image from "next/image";
 import { formatDate } from "@/lib/date-utils";
 import { useDeleteEvent } from "@/lib/api/events";
 import { toast } from "@/hooks/use-toast";
+import { EVENT_CATEGORIES } from "@/lib/event-categories";
 
 const statusOptions = [
   "All Status",
@@ -50,17 +51,8 @@ const statusOptions = [
   "CANCELLED",
 ];
 const categoryOptions = [
-  "All Categories",
-  "conference",
-  "workshop",
-  "seminar",
-  "networking",
-  "concert",
-  "festival",
-  "exhibition",
-  "sports",
-  "charity",
-  "other",
+  { value: "All Categories", label: "All Categories" },
+  ...EVENT_CATEGORIES,
 ];
 
 export function EventListPage() {
@@ -181,8 +173,8 @@ export function EventListPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {categoryOptions.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

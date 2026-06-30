@@ -1,6 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import prisma from "@/lib/prisma";
+import {
+  getCategoryFilterValues,
+  normalizeEventCategory,
+} from "@/lib/event-categories";
 
 export async function GET(request: NextRequest) {
   const { error } = await requireAdmin();
@@ -11,11 +15,19 @@ export async function GET(request: NextRequest) {
   const organizerId = searchParams.get("organizerId");
   const category = searchParams.get("category");
   const status = searchParams.get("status");
+  const categoryValues = category ? getCategoryFilterValues(category) : [];
 
   const events = await prisma.event.findMany({
     where: {
       ...(organizerId && organizerId !== "ALL" ? { organizerId } : {}),
-      ...(category && category !== "ALL" ? { category } : {}),
+      ...(category && category !== "ALL"
+        ? {
+            category:
+              categoryValues.length > 0
+                ? { in: categoryValues }
+                : "__invalid_category__",
+          }
+        : {}),
       ...(status && status !== "ALL" ? { status: status as any } : {}),
       ...(search
         ? {
@@ -52,6 +64,7 @@ export async function POST(request: NextRequest) {
     startDate,
     endDate,
     mainImage,
+    images = [],
     organizerId,
     ticketTypes = [],
     status = "UPCOMING",
@@ -59,6 +72,11 @@ export async function POST(request: NextRequest) {
 
   if (!title || !category || !location || !startDate || !endDate || !organizerId) {
     return NextResponse.json({ error: "Missing required event fields" }, { status: 400 });
+  }
+
+  const normalizedCategory = normalizeEventCategory(category);
+  if (!normalizedCategory) {
+    return NextResponse.json({ error: "Invalid event category" }, { status: 400 });
   }
 
   const organizer = await prisma.user.findFirst({
@@ -83,7 +101,7 @@ export async function POST(request: NextRequest) {
     data: {
       title,
       description,
-      category: String(category).toLowerCase(),
+      category: normalizedCategory,
       location,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
@@ -92,6 +110,12 @@ export async function POST(request: NextRequest) {
       totalTickets,
       organizerId,
       status,
+      images:
+        Array.isArray(images) && images.length > 0
+          ? {
+              create: images.map((url: string) => ({ url })),
+            }
+          : undefined,
       ticketTypes: {
         create: normalizedTicketTypes.map((type: any) => ({
           name: type.name,
@@ -104,6 +128,7 @@ export async function POST(request: NextRequest) {
     include: {
       organizer: { select: { id: true, name: true, email: true } },
       ticketTypes: true,
+      images: true,
     },
   });
 

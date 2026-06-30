@@ -38,19 +38,7 @@ import { cn } from "@/lib/utils";
 import { ImageGalleryUpload } from "@/components/ui/image-gallery-upload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-
-const eventCategories = [
-  "conference",
-  "workshop",
-  "seminar",
-  "networking",
-  "concert",
-  "festival",
-  "exhibition",
-  "sports",
-  "charity",
-  "other",
-];
+import { EVENT_CATEGORIES } from "@/lib/event-categories";
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -293,10 +281,9 @@ export function CreateEventForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {eventCategories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category.charAt(0).toUpperCase() +
-                              category.slice(1)}
+                        {EVENT_CATEGORIES.map((category) => (
+                          <SelectItem key={category.value} value={category.value}>
+                            {category.label}
                           </SelectItem>
                         ))}
                       </SelectContent>

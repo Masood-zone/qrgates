@@ -10,20 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { PublicEventCard } from "@/components/events/public-event-card";
 import { useEvents, useFeaturedEvents } from "@/lib/api/events";
+import { EVENT_CATEGORIES } from "@/lib/event-categories";
 
-const categories = [
-  "All",
-  "conference",
-  "workshop",
-  "seminar",
-  "networking",
-  "concert",
-  "festival",
-  "exhibition",
-  "sports",
-  "charity",
-  "other",
-];
+const categories = [{ value: "All", label: "All" }, ...EVENT_CATEGORIES];
 
 const statusOptions = ["All", "UPCOMING", "ONGOING"];
 
@@ -148,19 +137,19 @@ export function EventsPage() {
                   Category
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {categories.slice(0, 8).map((category) => (
+                  {categories.map((category) => (
                     <Button
-                      key={category}
+                      key={category.value}
                       type="button"
                       size="sm"
-                      variant={selectedCategory === category ? "default" : "outline"}
+                      variant={selectedCategory === category.value ? "default" : "outline"}
                       className="rounded-full"
                       onClick={() => {
-                        setSelectedCategory(category);
+                        setSelectedCategory(category.value);
                         setCurrentPage(1);
                       }}
                     >
-                      {category === "All" ? "All" : category}
+                      {category.label}
                     </Button>
                   ))}
                 </div>

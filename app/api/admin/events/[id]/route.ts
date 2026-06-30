@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import prisma from "@/lib/prisma";
+import { normalizeEventCategory } from "@/lib/event-categories";
 
 export async function GET(
   request: NextRequest,
@@ -40,7 +41,7 @@ export async function PUT(
 
   if (!existing) return NextResponse.json({ error: "Event not found" }, { status: 404 });
 
-  const { ticketTypes, ...eventFields } = body;
+  const { ticketTypes, images, ...eventFields } = body;
 
   if (eventFields.organizerId) {
     const organizer = await prisma.user.findFirst({
@@ -95,12 +96,29 @@ export async function PUT(
       ? Number(eventFields.totalTickets)
       : updatedTypes.reduce((sum, type) => sum + type.quantity, 0);
 
+  if (eventFields.category !== undefined) {
+    const normalizedCategory = normalizeEventCategory(eventFields.category);
+    if (!normalizedCategory) {
+      return NextResponse.json({ error: "Invalid event category" }, { status: 400 });
+    }
+    eventFields.category = normalizedCategory;
+  }
+
+  if (Array.isArray(images)) {
+    await prisma.eventImage.deleteMany({ where: { eventId: id } });
+    if (images.length > 0) {
+      await prisma.eventImage.createMany({
+        data: images.map((url: string) => ({ eventId: id, url })),
+      });
+    }
+  }
+
   const event = await prisma.event.update({
     where: { id },
     data: {
       ...(eventFields.title !== undefined ? { title: eventFields.title } : {}),
       ...(eventFields.description !== undefined ? { description: eventFields.description } : {}),
-      ...(eventFields.category !== undefined ? { category: String(eventFields.category).toLowerCase() } : {}),
+      ...(eventFields.category !== undefined ? { category: eventFields.category } : {}),
       ...(eventFields.location !== undefined ? { location: eventFields.location } : {}),
       ...(eventFields.startDate !== undefined ? { startDate: new Date(eventFields.startDate) } : {}),
       ...(eventFields.endDate !== undefined ? { endDate: new Date(eventFields.endDate) } : {}),
@@ -113,6 +131,7 @@ export async function PUT(
     include: {
       organizer: { select: { id: true, name: true, email: true } },
       ticketTypes: true,
+      images: true,
       _count: { select: { tickets: true, orders: true, verificationLogs: true } },
     },
   });

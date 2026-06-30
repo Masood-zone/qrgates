@@ -24,6 +24,10 @@ import { ArrowLeft, Save } from "lucide-react";
 import { PageLoader } from "@/components/ui/loader";
 import Link from "next/link";
 import { toast } from "sonner";
+import {
+  EVENT_CATEGORIES,
+  normalizeEventCategory,
+} from "@/lib/event-categories";
 
 const eventSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -79,7 +83,7 @@ export function EditEventPage({ eventId }: EditEventPageProps) {
         time: startDate.toTimeString().slice(0, 5),
         endTime: endDate.toTimeString().slice(0, 5),
         location: event.location,
-        category: event.category,
+        category: normalizeEventCategory(event.category) ?? "conference",
         price: event.price,
         totalTickets: event.totalTickets,
         image: event?.mainImage || "",
@@ -254,22 +258,19 @@ export function EditEventPage({ eventId }: EditEventPageProps) {
                   <Label htmlFor="category">Category</Label>
                   <Select
                     onValueChange={(value) => setValue("category", value)}
-                    defaultValue={event.category}
+                    defaultValue={
+                      normalizeEventCategory(event.category) ?? "conference"
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="conference">Conference</SelectItem>
-                      <SelectItem value="workshop">Workshop</SelectItem>
-                      <SelectItem value="seminar">Seminar</SelectItem>
-                      <SelectItem value="networking">Networking</SelectItem>
-                      <SelectItem value="concert">Concert</SelectItem>
-                      <SelectItem value="festival">Festival</SelectItem>
-                      <SelectItem value="exhibition">Exhibition</SelectItem>
-                      <SelectItem value="sports">Sports</SelectItem>
-                      <SelectItem value="charity">Charity</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      {EVENT_CATEGORIES.map((category) => (
+                        <SelectItem key={category.value} value={category.value}>
+                          {category.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   {errors.category && (
