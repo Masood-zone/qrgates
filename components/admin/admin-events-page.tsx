@@ -34,6 +34,7 @@ import {
   getEventCategoryLabel,
   normalizeEventCategory,
 } from "@/lib/event-categories";
+import { validateEventDateRange } from "@/lib/event-date-validation";
 
 type Organizer = { id: string; name: string | null; email: string };
 type EventItem = {
@@ -82,6 +83,13 @@ const emptyForm = {
 const statusOptions = ["UPCOMING", "ONGOING", "COMPLETED", "CANCELLED"];
 const categoryOptions = EVENT_CATEGORIES;
 
+function toDateTimeLocalInputValue(date: Date) {
+  const pad = (value: number) => value.toString().padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
+    date.getHours()
+  )}:${pad(date.getMinutes())}`;
+}
+
 export function AdminEventsPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [organizers, setOrganizers] = useState<Organizer[]>([]);
@@ -95,6 +103,11 @@ export function AdminEventsPage() {
   const [loading, setLoading] = useState(false);
 
   const isEditing = Boolean(form.id);
+  const minimumEventDateTime = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return toDateTimeLocalInputValue(today);
+  }, []);
 
   const loadData = async () => {
     const eventParams = new URLSearchParams();
@@ -150,6 +163,15 @@ export function AdminEventsPage() {
 
   const submitEvent = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!isEditing) {
+      const dateValidation = validateEventDateRange(normalizedStart, normalizedEnd);
+      if (!dateValidation.ok) {
+        toast.error(dateValidation.message);
+        return;
+      }
+    }
+
     setLoading(true);
 
     const payload = {
@@ -468,11 +490,23 @@ export function AdminEventsPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Starts</Label>
-                    <Input type="datetime-local" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} required />
+                    <Input
+                      type="datetime-local"
+                      min={isEditing ? undefined : minimumEventDateTime}
+                      value={form.startDate}
+                      onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Ends</Label>
-                    <Input type="datetime-local" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} required />
+                    <Input
+                      type="datetime-local"
+                      min={isEditing ? undefined : form.startDate || minimumEventDateTime}
+                      value={form.endDate}
+                      onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+                      required
+                    />
                   </div>
                 </div>
               </div>
