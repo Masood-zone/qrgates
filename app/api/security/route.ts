@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { hash } from "bcryptjs";
+import { notifySecurityOfficerAssigned } from "@/lib/email/notifications";
 
 export async function GET(request: NextRequest) {
   try {
@@ -191,6 +192,8 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    await notifySecurityOfficerAssigned(securityOfficer.id);
 
     return NextResponse.json(securityOfficer, { status: 201 });
   } catch (error) {

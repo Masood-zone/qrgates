@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { requireAdmin } from "@/lib/admin-auth";
 import prisma from "@/lib/prisma";
+import { notifySecurityOfficerAssigned } from "@/lib/email/notifications";
 
 export async function GET(request: NextRequest) {
   const { error } = await requireAdmin();
@@ -82,6 +83,8 @@ export async function POST(request: NextRequest) {
       event: { select: { id: true, title: true } },
     },
   });
+
+  await notifySecurityOfficerAssigned(officer.id);
 
   return NextResponse.json({ officer }, { status: 201 });
 }

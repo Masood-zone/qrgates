@@ -236,3 +236,42 @@ export function newEventAnnouncementEmail({
     `,
   });
 }
+
+export function securityOfficerAssignmentEmail({
+  name,
+  eventTitle,
+  eventStart,
+  eventEnd,
+  eventLocation,
+  organizerName,
+  securityPortalUrl,
+}: {
+  name: string;
+  eventTitle: string;
+  eventStart: string;
+  eventEnd: string;
+  eventLocation: string;
+  organizerName: string;
+  securityPortalUrl: string;
+}) {
+  return QrGateEmailTemplate({
+    title: "Security Assignment on QuickGates",
+    body: `
+      <p style="margin-bottom:24px;">Hi <strong>${name}</strong>,</p>
+      <p style="margin-bottom:24px;">You have been assigned as a security officer for <strong>${eventTitle}</strong>.</p>
+      <ul style="margin-bottom:24px;padding-left:20px;">
+        <li><strong>Event:</strong> ${eventTitle}</li>
+        <li><strong>Starts:</strong> ${eventStart}</li>
+        <li><strong>Ends:</strong> ${eventEnd}</li>
+        <li><strong>Location:</strong> ${eventLocation}</li>
+        <li><strong>Organizer:</strong> ${organizerName}</li>
+      </ul>
+      <p style="margin-bottom:24px;">Your role is to scan attendee tickets at the event entrance and verify that each ticket is legitimate, accurate, and valid for this event before allowing entry.</p>
+      <p style="margin-bottom:24px;">Please coordinate arrival time, access instructions, and compensation directly with the event organizer.</p>
+      <p style="text-align:center;margin-bottom:24px;">
+        <a href="${securityPortalUrl}" style="display:inline-block;padding:12px 28px;background:#ba0033;color:#ffffff;font-weight:700;border-radius:8px;text-decoration:none;font-size:1rem;">Open Security Portal</a>
+      </p>
+      <p style="color:#5b6278;font-size:0.95rem;">Thank you for helping keep event entry smooth and accurate.</p>
+    `,
+  });
+}

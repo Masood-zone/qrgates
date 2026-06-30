@@ -3,6 +3,7 @@ import {
   accountSuspendedEmail,
   newEventAnnouncementEmail,
   organizerOrderMilestoneEmail,
+  securityOfficerAssignmentEmail,
 } from "@/lib/email/email-templates";
 import { sendSafeMail } from "@/lib/email/mailer";
 
@@ -12,6 +13,10 @@ function appUrl() {
 
 function formatEventDate(date: Date) {
   return new Date(date).toLocaleDateString();
+}
+
+function formatEventDateTime(date: Date) {
+  return new Date(date).toLocaleString();
 }
 
 export async function notifyAccountSuspended({
@@ -93,6 +98,40 @@ export async function notifyOrganizerOrderMilestone(eventId: string) {
       name: event.organizer.name || event.organizer.email,
       eventTitle: event.title,
       completedOrders,
+    }),
+  });
+}
+
+export async function notifySecurityOfficerAssigned(officerId: string) {
+  const officer = await prisma.securityOfficer.findUnique({
+    where: { id: officerId },
+    include: {
+      event: {
+        include: {
+          organizer: { select: { name: true, email: true } },
+        },
+      },
+    },
+  });
+
+  if (!officer?.email) return;
+
+  const activeStatuses = new Set(["UPCOMING", "ONGOING", "LIVE"]);
+  if (!activeStatuses.has(officer.event.status) || officer.event.endDate < new Date()) {
+    return;
+  }
+
+  await sendSafeMail({
+    to: officer.email,
+    subject: `Security assignment: ${officer.event.title}`,
+    html: securityOfficerAssignmentEmail({
+      name: officer.name || officer.email,
+      eventTitle: officer.event.title,
+      eventStart: formatEventDateTime(officer.event.startDate),
+      eventEnd: formatEventDateTime(officer.event.endDate),
+      eventLocation: officer.event.location,
+      organizerName: officer.event.organizer.name || officer.event.organizer.email,
+      securityPortalUrl: `${appUrl()}/security/${officer.event.id}/${officer.id}`,
     }),
   });
 }
