@@ -36,6 +36,7 @@ export interface User {
   gender: string | null;
   birthday: Date | null;
   role: "USER" | "ADMIN" | "ORGANIZER" | "SECURITY";
+  status: "ACTIVE" | "SUSPENDED";
   isOrganizer: boolean;
   profileImage: string | null;
   createdAt: Date;

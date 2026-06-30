@@ -39,6 +39,10 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        if (user.status === "SUSPENDED") {
+          return null;
+        }
+
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password
@@ -64,7 +68,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET,
   pages: {
     signIn: "/auth/signin",
-    signUp: "/auth/signup",
     error: "/auth/error",
     verifyRequest: "/auth/verify-request",
   },

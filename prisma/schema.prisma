@@ -17,6 +17,7 @@ model User {
   gender        String?
   birthday      DateTime?
   role          Role      @default(USER)
+  status        UserStatus @default(ACTIVE)
   isOrganizer   Boolean   @default(false)
   profileImage  String?
   resetToken       String? 
@@ -274,6 +275,11 @@ enum Role {
   ADMIN
   ORGANIZER
   SECURITY
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
 }
 
 enum EventStatus {

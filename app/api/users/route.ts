@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
         name: true,
         phone: true,
         role: true,
+        status: true,
         isOrganizer: true,
         createdAt: true,
       },

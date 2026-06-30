@@ -18,6 +18,7 @@ export async function GET(
         gender: true,
         birthday: true,
         role: true,
+        status: true,
         isOrganizer: true,
         createdAt: true,
         _count: {
@@ -63,6 +64,7 @@ export async function PUT(
         gender: true,
         birthday: true,
         role: true,
+        status: true,
         isOrganizer: true,
         updatedAt: true,
       },
