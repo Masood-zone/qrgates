@@ -57,6 +57,7 @@ QuickGates/
 │   ├── qr-code.ts              # QR code generation
 │   ├── date-utils.ts           # Date formatting helpers
 │   ├── event-categories.ts     # Event category definitions and normalization
+│   ├── event-date-validation.ts # Event date range validation utilities
 │   ├── cart-utils.ts           # Cart item expiration utilities
 │   └── cloudinary.ts           # Image uploads
 │
@@ -80,16 +81,18 @@ QuickGates/
 
 - **Event Discovery** -- Public listing with category filtering, search, and status badges
 - **Centralized Event Categories** -- Unified category definitions with normalization and legacy value mapping
+- **Event Date Validation** -- Prevents creating events with past dates
 - **QR Code Tickets** -- Generation on purchase, scanning for entry verification
 - **Admin Dashboard** -- User management, event oversight with image gallery uploads, organizer control, analytics, security officer management
 - **User Suspension** -- Admins can suspend users; suspended accounts are blocked at login with email notifications
 - **Organizer Portal** -- Event CRUD, attendee management, ticket sales tracking, order milestone notifications
+- **Security Officer Management** -- Assign officers to events with email notifications and dedicated portal access
 - **Security Officer Portal** -- QR-based ticket verification per event
 - **Automated Cron** -- Vercel cron updates event statuses (UPCOMING -> ONGOING -> COMPLETED)
 - **Checkout Flow** -- Paystack-powered payment with order and ticket creation
 - **Cart Expiration Handling** -- Automatic pruning of expired cart items and blocking past event purchases
 - **Navigation Progress** -- Visual progress indicator during page transitions
-- **Email Notifications** -- Branded emails for registration, tickets, account suspension, and event announcements
+- **Email Notifications** -- Branded emails for registration, tickets, account suspension, event announcements, and security assignments
 - **Newsletter** -- Email subscription endpoint
 - **Responsive UI** -- TailwindCSS with refined light/dark theme tokens
 
@@ -154,6 +157,7 @@ Seeds an admin user, an organizer user, six demo events (various statuses), and 
 | `JWT_SECRET` | NextAuth session secret |
 | `NEXTAUTH_SECRET` | NextAuth encryption secret |
 | `NEXTAUTH_URL` | App base URL |
+| `NEXT_PUBLIC_APP_URL` / `NEXT_PUBLIC_BASE_URL` | Public app URL for email links |
 | `CRON_SECRET` | Bearer token for Vercel cron endpoint |
 | `PAYSTACK_SECRET_KEY` | Paystack payment integration |
 | `PAYSTACK_BASE_URL` | Paystack API base URL (defaults to https://api.paystack.co) |
