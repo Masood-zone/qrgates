@@ -49,10 +49,12 @@ export function AttendeeManagementPage({
     currentPage,
     20
   );
-  console.log("Tickets Data:", ticketsData, "event", event);
+  const tickets = Array.isArray(ticketsData)
+    ? ticketsData
+    : ticketsData?.data || [];
 
   const filteredTickets =
-    ticketsData?.filter(
+    tickets?.filter(
       (ticket: Ticket) =>
         ticket.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ticket.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -60,7 +62,7 @@ export function AttendeeManagementPage({
     ) || [];
 
   const handleExportAttendees = () => {
-    if (!ticketsData) return;
+    if (!tickets.length) return;
 
     const csvContent = [
       [
@@ -72,14 +74,14 @@ export function AttendeeManagementPage({
         "Status",
         "Scanned",
       ],
-      ...ticketsData?.data?.map((ticket: Ticket) => [
+      ...tickets.map((ticket: Ticket) => [
         ticket.user?.name || "N/A",
         ticket.user?.email || "N/A",
         ticket.user?.phone || "N/A",
         ticket.qrCode,
         formatDate(ticket.createdAt),
         ticket.status,
-        ticket.scanned ? "Yes" : "No",
+        ticket.checkedIn ? "Yes" : "No",
       ]),
     ]
       .map((row) => row.join(","))
@@ -175,9 +177,7 @@ export function AttendeeManagementPage({
               <div>
                 <p className="text-sm text-muted-foreground">Checked In</p>
                 <p className="font-semibold">
-                  {ticketsData?.data?.filter(
-                    (t: { scanned: boolean }) => t.scanned
-                  ).length || 0}
+                  {tickets.filter((t: Ticket) => t.checkedIn).length || 0}
                 </p>
               </div>
             </div>
@@ -300,7 +300,7 @@ export function AttendeeManagementPage({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        {ticket?.scanned ? (
+                        {ticket?.checkedIn ? (
                           <div className="flex items-center text-primary">
                             <CheckCircle className="w-4 h-4 mr-1" />
                             <span className="text-sm">Checked In</span>
@@ -322,7 +322,7 @@ export function AttendeeManagementPage({
       </Card>
 
       {/* Pagination */}
-      {ticketsData && ticketsData?.pagination?.pages > 1 && (
+      {!Array.isArray(ticketsData) && ticketsData?.pagination?.pages > 1 && (
         <div className="flex justify-center items-center space-x-2">
           <Button
             variant="outline"
