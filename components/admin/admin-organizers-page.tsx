@@ -2,7 +2,8 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { Building2, CalendarDays, Mail, MoreHorizontal, Plus, Search, ShieldCheck, Ticket, Trash2, UserRound } from "lucide-react";
+import Link from "next/link";
+import { Building2, CalendarDays, Eye, Mail, MoreHorizontal, Plus, Search, ShieldCheck, Ticket, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -220,10 +221,13 @@ export function AdminOrganizersPage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3 text-center lg:w-80">
-                  <div className="rounded-lg bg-secondary/60 p-3">
+                  <Link
+                    href={`/admin/organizers/${organizer.id}`}
+                    className="rounded-lg bg-secondary/60 p-3 transition-colors hover:bg-secondary"
+                  >
                     <p className="text-lg font-bold">{organizer._count?.events || 0}</p>
                     <p className="text-xs text-muted-foreground">Events</p>
-                  </div>
+                  </Link>
                   <div className="rounded-lg bg-secondary/60 p-3">
                     <p className="text-lg font-bold">{organizer._count?.orders || 0}</p>
                     <p className="text-xs text-muted-foreground">Orders</p>
@@ -240,6 +244,12 @@ export function AdminOrganizersPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href={`/admin/organizers/${organizer.id}`}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Events
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => updateStatus(organizer, organizer.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE")}>
                       <ShieldCheck className="mr-2 h-4 w-4" />
                       {organizer.status === "ACTIVE" ? "Suspend" : "Activate"}
