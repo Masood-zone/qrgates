@@ -54,12 +54,18 @@ export async function POST(request: NextRequest) {
   const { name, email, phone, address, profileImage, password } = body;
 
   if (!email || !name) {
-    return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Name and email are required" },
+      { status: 400 },
+    );
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return NextResponse.json({ error: "Email already exists" }, { status: 409 });
+    return NextResponse.json(
+      { error: "Email already exists" },
+      { status: 409 },
+    );
   }
 
   const plainPassword = password || "organizer123";
@@ -103,6 +109,25 @@ export async function POST(request: NextRequest) {
       loginUrl: `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/auth/signin`,
     }),
   });
+  // let smsSent = false;
+  // if (organizer.phone) {
+  //   try {
+  //     const smsResponse = await fetch(
+  //       `${process.env.NEXT_PUBLIC_APP_URL}/api/sms/send`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({
+  //           to: organizer.phone,
+  //           message: `Your QuickGates organizer account is ready. Email: ${organizer.email}, Password: ${plainPassword}. Login at ${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/auth/signin`,
+  //         }),
+  //       },
+  //     );
+  //     smsSent = smsResponse.ok;
+  //   } catch (error) {
+  //     console.error("Error sending SMS:", error);
+  //   }
+  // }
 
   return NextResponse.json({ organizer, emailSent }, { status: 201 });
 }
