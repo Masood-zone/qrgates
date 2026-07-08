@@ -3,6 +3,11 @@ import prisma from "@/lib/prisma";
 import { transporter } from "@/lib/email/nodemailer";
 import { ticketScanNotificationEmail } from "@/lib/email/email-templates";
 import { getMailFrom } from "@/lib/email/mailer";
+import {
+  CHECK_IN_ACTION,
+  getTicketCheckInStatus,
+  withTicketCheckInStatus,
+} from "@/lib/tickets/check-in";
 
 interface QRCodeData {
   eventId: string;
@@ -11,9 +16,6 @@ interface QRCodeData {
   ticketNumber: number;
   timestamp: number;
 }
-
-// Max scans per ticket (optional, can be set based on event duration)
-const MAX_SCANS_PER_TICKET = 100; // or set dynamically per event
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,6 +26,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { message: "Event ID is required" },
         { status: 400 }
+      );
+    }
+
+    if (!securityId) {
+      return NextResponse.json(
+        { valid: false, message: "Security ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const securityOfficer = await prisma.securityOfficer.findFirst({
+      where: {
+        id: securityId,
+        eventId,
+        active: true,
+      },
+      select: { id: true },
+    });
+
+    if (!securityOfficer) {
+      return NextResponse.json(
+        {
+          valid: false,
+          message: "Security officer not authorized for this event",
+        },
+        { status: 403 }
       );
     }
 
@@ -324,37 +352,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Count previous scans for this ticket during the event
-    const scanCount = await prisma.verificationLog.count({
-      where: {
-        ticketId: ticket.id,
-        eventId: ticket.eventId,
-        timestamp: {
-          gte: start,
-          lte: end,
-        },
-        action: "SCANNED",
-      },
-    });
-    if (scanCount >= MAX_SCANS_PER_TICKET) {
+    const existingCheckIn = await getTicketCheckInStatus(
+      prisma,
+      ticket.id,
+      ticket.eventId
+    );
+
+    if (existingCheckIn.checkedIn) {
       return NextResponse.json(
         {
           valid: false,
-          message: `This ticket has reached the maximum number of allowed scans for this event.`,
+          alreadyCheckedIn: true,
+          message: "This ticket has already been checked in.",
+          ticket: withTicketCheckInStatus(ticket, existingCheckIn),
+          scanCount: 1,
+          eventWindow: { start, end },
         },
-        { status: 429 }
+        { status: 409 }
       );
     }
 
-    // Log the scan
-    await prisma.verificationLog.create({
+    const checkInLog = await prisma.verificationLog.create({
       data: {
         ticketId: ticket.id,
         eventId: ticket.eventId,
-        securityOfficerId: securityId || "SYSTEM", // Always provide a string
-        action: "SCANNED",
-        details: "Ticket scanned for entry/exit",
+        securityOfficerId: securityOfficer.id,
+        action: CHECK_IN_ACTION,
+        details: "Ticket checked in for event entry",
         timestamp: now,
+      },
+      select: { timestamp: true },
+    });
+
+    await prisma.ticket.update({
+      where: { id: ticket.id },
+      data: {
+        isUsed: true,
+        usedAt: checkInLog.timestamp,
       },
     });
 
@@ -376,9 +410,12 @@ export async function POST(request: NextRequest) {
     // Return ticket info and scan count
     return NextResponse.json({
       valid: true,
-      message: "Ticket is valid for entry/exit.",
-      ticket: ticket,
-      scanCount,
+      message: "Ticket checked in successfully.",
+      ticket: withTicketCheckInStatus(ticket, {
+        checkedIn: true,
+        checkedInAt: checkInLog.timestamp,
+      }),
+      scanCount: 1,
       eventWindow: { start, end },
     });
   } catch (error) {

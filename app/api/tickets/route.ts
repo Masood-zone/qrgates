@@ -1,6 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { generateQRCode } from "@/lib/qr-code";
 import prisma from "@/lib/prisma";
+import {
+  getTicketCheckInStatusMap,
+  withTicketCheckInStatus,
+} from "@/lib/tickets/check-in";
 
 export async function POST(request: NextRequest) {
   try {
@@ -142,6 +146,8 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             email: true,
+            phone: true,
+            profileImage: true,
           },
         },
         order: {
@@ -149,15 +155,37 @@ export async function GET(request: NextRequest) {
             id: true,
             status: true,
             total: true,
+            createdAt: true,
           },
         },
+        ticketType: true,
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    return NextResponse.json(tickets);
+    const checkInStatusMap = await getTicketCheckInStatusMap(
+      prisma,
+      tickets.map((ticket) => ticket.id)
+    );
+
+    const ticketsWithCheckInStatus = tickets.map((ticket) => {
+      const { profileImage, ...user } = ticket.user;
+
+      return withTicketCheckInStatus(
+        {
+          ...ticket,
+          user: {
+            ...user,
+            image: profileImage,
+          },
+        },
+        checkInStatusMap.get(ticket.id)
+      );
+    });
+
+    return NextResponse.json(ticketsWithCheckInStatus);
   } catch (error) {
     console.error("Error fetching tickets:", error);
     return NextResponse.json(

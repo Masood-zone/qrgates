@@ -2,6 +2,11 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import {
+  CHECK_IN_ACTION,
+  getTicketCheckInStatus,
+  withTicketCheckInStatus,
+} from "@/lib/tickets/check-in";
 
 interface QRCodeData {
   eventId: string;
@@ -303,14 +308,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if ticket is already used
-    if (ticket.isUsed) {
+    const checkInStatus = await getTicketCheckInStatus(
+      prisma,
+      ticket.id,
+      eventId
+    );
+
+    if (checkInStatus.checkedIn) {
       return NextResponse.json(
         {
           valid: false,
-          message: "This ticket has already been used",
-          ticket: ticket,
-          usedAt: ticket.usedAt,
+          alreadyCheckedIn: true,
+          message: "This ticket has already been checked in.",
+          ticket: withTicketCheckInStatus(ticket, checkInStatus),
+          usedAt: checkInStatus.checkedInAt,
         },
         { status: 409 }
       );
@@ -322,10 +333,19 @@ export async function POST(request: NextRequest) {
         ticketId: ticket.id,
         securityOfficerId: securityId,
         eventId: eventId,
-        action: "VERIFIED",
-        details: `Ticket verified by ${
+        action: CHECK_IN_ACTION,
+        details: `Ticket checked in by ${
           session.user.name || session.user.email
         }`,
+      },
+      select: { timestamp: true },
+    });
+
+    await prisma.ticket.update({
+      where: { id: ticket.id },
+      data: {
+        isUsed: true,
+        usedAt: new Date(),
       },
     });
 
@@ -345,8 +365,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       valid: true,
-      message: "Valid ticket found",
-      ticket: ticket,
+      message: "Ticket checked in successfully.",
+      ticket: withTicketCheckInStatus(ticket, {
+        checkedIn: true,
+        checkedInAt: new Date(),
+      }),
       stats: {
         totalVerified: stats._count.id,
         recentActivity: stats._count.id,

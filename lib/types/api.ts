@@ -99,6 +99,8 @@ export interface Ticket {
   createdAt: Date;
   updatedAt: Date;
   status: string; // "PENDING" | "USED" | "CANCELLED"
+  checkedIn: boolean;
+  checkedInAt: Date | null;
   scanned: boolean;
   ticketTypeId?: string;
   ticketType?: TicketType;

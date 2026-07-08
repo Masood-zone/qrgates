@@ -91,6 +91,9 @@ export function ScanTicket({
   const [verificationHistory, setVerificationHistory] = useState<any[]>([]);
 
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const activeScanRef = useRef(false);
+  const verificationInFlightRef = useRef(false);
+  const processedCodeRef = useRef<string | null>(null);
 
   // Prevent duplicate scans: track last scanned QR and debounce
   const [lastScannedCode, setLastScannedCode] = useState<string | null>(null);
@@ -114,14 +117,19 @@ export function ScanTicket({
   // Debounced QR scan handler
   const handleQrScan = useCallback(
     async (decodedText: string) => {
-      if (scanCooldown) return;
-      if (lastScannedCode === decodedText) return;
+      const code = decodedText.trim();
+      if (!code) return;
+      if (scanCooldown || activeScanRef.current) return;
+      if (lastScannedCode === code || processedCodeRef.current === code) return;
+
+      activeScanRef.current = true;
+      processedCodeRef.current = code;
       setScanCooldown(true);
-      setLastScannedCode(decodedText);
-      await handleTicketVerification(decodedText, "qr");
-      setTimeout(() => setScanCooldown(false), 2000); // 2s cooldown
+      setLastScannedCode(code);
+      await stopScanner();
+      await handleTicketVerification(code, "qr");
     },
-    [lastScannedCode, scanCooldown]
+    [lastScannedCode, scanCooldown, stopScanner]
   );
 
   const startScanner = useCallback(async () => {
@@ -151,9 +159,9 @@ export function ScanTicket({
         backCamera.id,
         { fps: 10, qrbox: { width: 250, height: 250 } },
         async (decodedText) => {
+          if (activeScanRef.current) return;
           setIsScanning(false);
           await handleQrScan(decodedText);
-          await stopScanner();
         },
         (errorMessage, error) => {
           // Ignore decode errors - they're normal when no QR code is visible
@@ -190,7 +198,9 @@ export function ScanTicket({
     type: "qr" | "name" | "phone" | "email"
   ) => {
     if (!input.trim()) return;
+    if (verificationInFlightRef.current) return;
 
+    verificationInFlightRef.current = true;
     setIsVerifying(true);
     setScanError(null);
     try {
@@ -213,9 +223,7 @@ export function ScanTicket({
 
       if (response.ok && data.valid) {
         setTicketData(data.ticket);
-        setScanCount(
-          typeof data.scanCount === "number" ? data.scanCount + 1 : 1
-        );
+        setScanCount(typeof data.scanCount === "number" ? data.scanCount : 1);
         setEventWindow(
           data.eventWindow
             ? {
@@ -242,6 +250,31 @@ export function ScanTicket({
             data.ticket.user.name || data.ticket.user.email
           }`,
         });
+      } else if (data.alreadyCheckedIn && data.ticket) {
+        setTicketData(data.ticket);
+        setScanCount(typeof data.scanCount === "number" ? data.scanCount : 1);
+        setEventWindow(
+          data.eventWindow
+            ? {
+                start: new Date(data.eventWindow.start).toLocaleString(),
+                end: new Date(data.eventWindow.end).toLocaleString(),
+              }
+            : null
+        );
+        setScanError(data.message || "This ticket has already been checked in.");
+        setVerificationHistory((prev) => [
+          {
+            id: Date.now(),
+            ticket: data.ticket,
+            timestamp: new Date(),
+            action: "already_checked_in",
+          },
+          ...prev.slice(0, 9),
+        ]);
+        toast("Already Checked In", {
+          description:
+            data.message || "This ticket has already been checked in.",
+        });
       } else {
         setTicketData(null);
         setScanCount(null);
@@ -265,6 +298,7 @@ export function ScanTicket({
       });
     } finally {
       setIsVerifying(false);
+      verificationInFlightRef.current = false;
     }
   };
 
@@ -326,6 +360,8 @@ export function ScanTicket({
     setScanError(null);
     setLastScannedCode(null);
     setScanCooldown(false);
+    activeScanRef.current = false;
+    processedCodeRef.current = null;
   };
 
   return (
